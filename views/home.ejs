@@ -12,11 +12,14 @@
     <% if(user){ %>
         Logged in as <%= user %><br>
         <a href="/posts/new">Write a new post!</a><br>
+        <a href="/user/me">Your profile</a><br>
         <a href="/logout">Logout</a><br>
     <% } else { %>
         You are not logged in!<br>
         <a href="/login">Login/Register!</a><br>
     <% } %>
     <br><a href="/posts">See recent posts</a>
+
+
 </body>
 </html>
