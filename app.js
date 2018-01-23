@@ -20,7 +20,7 @@ passwordless.addDelivery((token, uid, recipient, cb, req) => {
         to: recipient,
         from: 'no-reply@vps.unsafe.men',
         subject: 'SSMT Login Token',
-        html: `Here's your login URL: http://${host}/?token=${token}&uid=${encodeURIComponent(uid)}`
+        html: `Here's your login URL: <a href="http://${host}/?token=${token}&uid=${encodeURIComponent(uid)}">http://${host}/?token=${token}&uid=${encodeURIComponent(uid)}</a>`
     }
     email.send(msg)
         .catch(e => {
