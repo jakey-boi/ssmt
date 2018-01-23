@@ -74,6 +74,6 @@ app.set('views', `${__dirname}/views`);
 app.locals.db = new sqlite3.Database(`${__dirname}/data/ssmt.db`);
 
 /* LISTEN */
-app.listen(8080, () => {
+app.listen(config.port, () => {
     console.log(`[INFO] Server listening on port 8080!`);
 });
