@@ -16,8 +16,8 @@
     <% if(me){ %>
         <strong>Here you can edit your profile:</strong>
         <form action="/user/update" method="post">
-            <input type="text" name="username" value="<%= user.username %>"><br>
-            <input type="text" name="bio" value="<%= user.bio %>"><br>
+            Username: <input type="text" name="username" value="<%= user.username %>"><br>
+            Bio: <input type="text" name="bio" value="<%= user.bio %>"><br>
             <input type="submit" value="Update">
         </form></br>
     <% } else { %>
