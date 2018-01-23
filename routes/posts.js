@@ -49,7 +49,7 @@ router.post('/vote', passwordless.restricted({ failureRedirect: '/login' }), (re
             let score = row.points - 1;
             req.app.locals.db.run('UPDATE posts SET points = ? WHERE id = ?', score, postId, (err) => {
                 if(err) throw err;
-                console.log(`[VOTE] Post [${postId}] points ${row.points} -> ${score}`);
+                //console.log(`[VOTE] Post [${postId}] points ${row.points} -> ${score}`);
                 res.json({ points: score });
             });
         });
