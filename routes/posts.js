@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const passwordless = require('passwordless');
 
 router.get('/', (req, res) => {
     req.app.locals.db.all('SELECT * FROM posts ORDER BY id DESC LIMIT 5;', (err, rows) => {
@@ -7,13 +8,13 @@ router.get('/', (req, res) => {
     });
 });
 
-router.get('/new', (req, res) => {
+router.get('/new', passwordless.restricted({ failureRedirect: '/login' }), (req, res) => {
     res.render('posts/new');
 });
 
-router.post('/new', (req, res) => {
+router.post('/new', passwordless.restricted({ failureRedirect: '/login' }), (req, res) => {
     if(!req.body.text) res.send('Missing text!');
-    req.app.locals.db.run('INSERT INTO posts (text) VALUES (?)', req.body.text, (err, ok) => {
+    req.app.locals.db.run('INSERT INTO posts (text, poster) VALUES (?, ?)', req.body.text, req.user, (err, ok) => {
         if(err) throw err;
         req.app.locals.db.get('SELECT last_insert_rowid()', (err, row) => {
             if(err) throw err;
@@ -24,7 +25,7 @@ router.post('/new', (req, res) => {
     })
 });
 
-router.post('/vote', (req, res) => {
+router.post('/vote', passwordless.restricted({ failureRedirect: '/login' }), (req, res) => {
     let postId = req.body.postId;
     let type = req.body.type;
     if(!postId || !type) res.send('Missing info to vote!');
@@ -58,12 +59,31 @@ router.post('/vote', (req, res) => {
     }
 });
 
+/*router.post('/posts/delete', passwordless.restricted({ failureRedirect: '/login' }), (req, res) => {
+    let pageId = req.body.pageId;
+    if(pageId) res.json({ ok: false });
+    req.app.locals.db.get('SELECT * FROM posts WHERE id = ?', pageId, (err, row) => {
+        if(err){
+            res.json({ ok: false });
+            throw err;
+        }
+        if(!row) res.json({ ok: false });
+        if(!req.user === row.poster) res.json({ ok: false });
+        req.app.locals.db.run('DELETE FROM posts WHERE id = ?', postId, (err) => {
+            if(err) throw err;
+            res.redirect('/posts');
+        });
+    });
+});*/
+
 router.get('/:id', (req, res) => {
     if(!req.params.id) res.redirect('/');
     req.app.locals.db.get('SELECT * FROM posts WHERE id = ?', req.params.id, (err, row) => {
         if(err) throw err;
         if(!row) res.send('Post not found!');
-        res.render('posts/post', row);
+        let canDelete;
+        if(req.user === row.poster) canDelete = true;
+        res.render('posts/post', { post: row, user: req.user, canDelete });
     });
 });
 

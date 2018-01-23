@@ -13,12 +13,14 @@
             <td>Post ID</td>
             <td>Text</td>
             <td>Score</td>
+            <td>Posted by</td>
         </tr>
         <% for(let i = 0; i < posts.length; i++){ %>
             <tr>
                 <td><a href="/posts/<%= posts[i].id %>"><%= posts[i].id %></a></td>
                 <td><strong><%= posts[i].text %></strong></td>
                 <td><%= posts[i].points %></td>
+                <td><%= posts[i].poster %></td>
             </tr>
         <% } %>
     </table>

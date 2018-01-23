@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title><%= username %>'s Profile | SSMT</title>
+</head>
+<body>
+    <% if(me){ %>
+        <strong>This is your profile.</strong><br>
+    <% } else { %>
+        <strong><%= username %>'s profile</strong><br>
+    <% } %>
+
+    <% if(me){ %>
+        <strong>Here you can edit your profile:</strong>
+        <form action="/user/update" method="post">
+            <input type="text" name="username" value="<%= user.username %>"><br>
+            <input type="text" name="bio" value="<%= user.bio %>"><br>
+            <input type="submit" value="Update">
+        </form></br>
+    <% } else { %>
+        <%= username %>'s bio: <strong><%= user.bio %></strong>
+    <% } %>
+
+</body>
+</html>
