@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Admin Panel | SSMT</title>
+    <script src="https://code.jquery.com/jquery-3.3.0.min.js"></script>
+    <script>
+        function run(){
+            let code = $('#code')[0].value;
+            let type = $('#evaltype')[0].value;
+            $.post('/admin/eval', { code, type }, (data, status) => {
+                //we got a response
+                let flag = '';
+                if(!data.success) flag = 'Error: ';
+                $('#output').text(`${flag}${data.out}`);
+            });
+        }
+    </script>
+</head>
+<body>
+    <textarea name="" id="code" cols="40" rows="10"></textarea><br>
+    Code type: 
+    <select name="" id="evaltype">
+        <option value="sql">SQL</option>
+        <option value="js">JavaScript</option>
+    </select>
+    <button onclick="run();">Eval</button>
+    <br><br><br>
+    <strong>Output:</strong><br>
+    <p id="output"></p>
+</body>
+</html>
