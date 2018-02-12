@@ -21,9 +21,9 @@
     </script>
     <nav>
         <div class="nav-wrapper">
-            <!-- <a href="/" class="brand-logo">SSMT</a>
-            <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
-            <ul id="nav-mobile" class="right side-nav">
+            <a href="#!" class="brand-logo">SSMT</a>
+            <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+            <ul class="right hide-on-med-and-down">
                 <% if(user){ %>
                     <li><a href="/posts/new"><i class="small left material-icons">add_circle</i>New post</a></li>
                     <li><a href="/logout"><i class="small left material-icons">exit_to_app</i>Logout</a></li>
@@ -33,30 +33,16 @@
                     <li><a href="/login"><i class="small left material-icons">account_circle</i>Login/Register</a></li>
                 <% } %>
             </ul>
-        </div> -->
-        <div class="nav-wrapper">
-                <a href="#!" class="brand-logo">SSMT</a>
-                <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
-                <ul class="right hide-on-med-and-down">
-                    <% if(user){ %>
-                        <li><a href="/posts/new"><i class="small left material-icons">add_circle</i>New post</a></li>
-                        <li><a href="/logout"><i class="small left material-icons">exit_to_app</i>Logout</a></li>
-                        <li><a href="/user/me"><i class="small left material-icons">account_circle</i><%= user %></a></li>
-                    <% } else { %>
-                        <li><a href="/posts"><i class="small left material-icons">mail_outline</i>Recent posts</a></li>
-                        <li><a href="/login"><i class="small left material-icons">account_circle</i>Login/Register</a></li>
-                    <% } %>
-                </ul>
-                <ul class="side-nav" id="mobile-demo">
-                    <% if(user){ %>
-                        <li><a href="/posts/new"><i class="small left material-icons">add_circle</i>New post</a></li>
-                        <li><a href="/logout"><i class="small left material-icons">exit_to_app</i>Logout</a></li>
-                        <li><a href="/user/me"><i class="small left material-icons">account_circle</i><%= user %></a></li>
-                    <% } else { %>
-                        <li><a href="/posts"><i class="small left material-icons">mail_outline</i>Recent posts</a></li>
-                        <li><a href="/login"><i class="small left material-icons">account_circle</i>Login/Register</a></li>
-                    <% } %>
-                </ul>
-              </div>
+            <ul class="side-nav" id="mobile-demo">
+                <% if(user){ %>
+                    <li><a href="/posts/new"><i class="small left material-icons">add_circle</i>New post</a></li>
+                    <li><a href="/logout"><i class="small left material-icons">exit_to_app</i>Logout</a></li>
+                    <li><a href="/user/me"><i class="small left material-icons">account_circle</i><%= user %></a></li>
+                <% } else { %>
+                    <li><a href="/posts"><i class="small left material-icons">mail_outline</i>Recent posts</a></li>
+                    <li><a href="/login"><i class="small left material-icons">account_circle</i>Login/Register</a></li>
+                <% } %>
+            </ul>
+        </div>
     </nav>
     
