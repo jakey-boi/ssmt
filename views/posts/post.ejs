@@ -1,4 +1,4 @@
-<%- include('partials/header', { title: 'Homepage', user: user }); %>
+<%- include('../partials/header', { title: `Post ${post.id}`, user: user }); %>
 <% if(user){ %>
     <script>
         const pId = <%= post.id %>;
@@ -26,4 +26,4 @@
 <% } else { %>
     <small>You must <a href="/login">login/signup</a> to vote on posts!</small><br>
 <% } %>
-<%- include('partials/footer'); %>
+<%- include('../partials/footer'); %>

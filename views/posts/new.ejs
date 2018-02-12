@@ -1,7 +1,16 @@
-<%- include('../partials/header', { title: '404', user: user }); %>
-    <form action="/posts/new" method="post">
-        Text: <input type="text" name="text" id="text">
-        <input type="submit" value="Submit">
-    </form>
+<%- include('../partials/header', { title: 'New Post', user: user }); %>
+    <h2 class="center-align">Write a new post!</h2>
+    <h5 class="center-align">When posting, ensure all content is kept SFW (Safe for Work)!</h5>
+    <br><br>
+    <div class="container">
+        <div class="input-field center-align col6">
+            <form action="/posts/new" method="post">
+                Write your post here:
+                <textarea name="text" id="text" cols="30" rows="10" style="display: inline;"></textarea>
+                <label for="text">Enter the post content here! <br></label>
+                <button type="submit"><i class="small left material-icons">send</i>Submit</button>
+            </form>
+        </div>
+    </div>
     <br><br>
 <%- include('../partials/footer'); %>

@@ -1,11 +1,12 @@
-<%- include('../partials/header', { title: 'Recent Posts', user: user }); %>
+<%- include('../partials/header', { title: 'Login/Register', user: user }); %>
     <h2>Login</h2>
     <div class="input-field">
         <form action="/sendtoken" method="post">
             <!-- <br>Email: <input type="email" name="user" id=""> -->
            <!--  <br><input type="submit" value="Login"> -->
-            <div class="input-field center-align">
-                <input id="email" type="email" class="validate" name="user">
+            <div class="input-field col s12 center-align inline">
+                Enter your email:
+                <input id="email" type="text" class="validate" name="user">
                 <label for="email">Email</label>
             </div>
         </form>

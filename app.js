@@ -36,18 +36,19 @@ passwordless.addDelivery((token, uid, recipient, cb, req) => {
             .then(() => {
                 cb(null);
             });
-
-        app.locals.db.get('SELECT * FROM users WHERE email = ?', uid, (err, row) => {
-            if(err) throw err;
-            if(row){
-                //do nothing
-            } else {
-                app.locals.db.run('INSERT INTO users (username, email, joinedAt) VALUES (?, ?, ?)', uid, uid,  Date.now(), (err) => {
-                    if(err) throw err;
-                })
-            }
-        })
     }
+
+    app.locals.db.get('SELECT * FROM users WHERE email = ?', uid, (err, row) => {
+        if(err) throw err;
+        if(row){
+            //do nothing
+        } else {
+            app.locals.db.run('INSERT INTO users (username, email, joinedAt) VALUES (?, ?, ?)', uid, uid,  Date.now(), (err) => {
+                if(err) throw err;
+            });
+        }
+    });
+
 });
 
 /* STATIC FILES */
