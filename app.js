@@ -7,6 +7,7 @@ const pwlStore = require('passwordless-sqlite3store');
 const email = require('@sendgrid/mail');
 const session = require('express-session');
 const sessionStore = require('connect-sqlite3')(session);
+const helmet = require('helmet');
 
 const config = require('./config.json');
 
@@ -50,6 +51,9 @@ passwordless.addDelivery((token, uid, recipient, cb, req) => {
     });
 
 });
+
+/* HELMET */
+app.use(helmet());
 
 /* STATIC FILES */
 app.use(express.static('public'));
