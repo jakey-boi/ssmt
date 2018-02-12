@@ -1,16 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Login/Signup | SSMT</title>
-</head>
-<body>
+<%- include('../partials/header', { title: 'Recent Posts', user: user }); %>
     <h2>Login</h2>
-    <form action="/sendtoken" method="post">
-        <br>Email: <input type="email" name="user" id="">
-        <br><input type="submit" value="Login">
-    </form>
-</body>
-</html>
+    <div class="input-field">
+        <form action="/sendtoken" method="post">
+            <!-- <br>Email: <input type="email" name="user" id=""> -->
+           <!--  <br><input type="submit" value="Login"> -->
+            <div class="input-field center-align">
+                <input id="email" type="email" class="validate" name="user">
+                <label for="email">Email</label>
+            </div>
+        </form>
+    </div>
+<%- include('../partials/footer'); %>

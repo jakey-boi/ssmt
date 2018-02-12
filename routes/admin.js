@@ -4,7 +4,7 @@ const passwordess = require('passwordless');
 router.get('/', passwordess.restricted(), (req, res) => {
     let owner = req.app.locals.config.owner;
     if(req.user !== owner) return res.redirect('/');
-    res.render('admin/home');
+    res.render('admin/home', { user: req.user });
 });
 
 router.post('/eval', passwordess.restricted(), (req, res) => {

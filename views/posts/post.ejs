@@ -1,15 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Post <%= post.id %> | SSMT</title>
-    <script src="https://code.jquery.com/jquery-3.3.0.min.js"></script>
+<%- include('partials/header', { title: 'Homepage', user: user }); %>
+<% if(user){ %>
     <script>
         const pId = <%= post.id %>;
-
-        <% if(user){ %>
             function upVote(){
                 $.post('/posts/vote', { postId: pId, type: 'up' }, (resp, status) => {
                     $('#points').text(`${resp.points} points`);
@@ -21,24 +13,17 @@
                     $('#points').text(`${resp.points} points`);
                 });
             }
-        <% } %>
-
     </script>
-</head>
-<body>
-    <strong><%= post.text %></strong>
-    <br>
-    <small>Posted by <%= post.poster %></small>
-    <br><br>
-    <small id="points"><%= post.points %> points</small><br>
-    <% if(user){ %>
-        <button onclick="upVote()">upvote</button>
-        <button onclick="downVote()">downvote</button><br>
-    <% } else { %>
-        <small>You must <a href="/login">login/signup</a> to vote on posts!</small><br>
-    <% } %>
-
-    <br><br>
-    <a href="/">Home</a>
-</body>
-</html>
+<% } %>
+<strong><%= post.text %></strong>
+<br>
+<small>Posted by <%= post.poster %></small>
+<br><br>
+<small id="points"><%= post.points %> points</small><br>
+<% if(user){ %>
+    <button onclick="upVote()">upvote</button>
+    <button onclick="downVote()">downvote</button><br>
+<% } else { %>
+    <small>You must <a href="/login">login/signup</a> to vote on posts!</small><br>
+<% } %>
+<%- include('partials/footer'); %>

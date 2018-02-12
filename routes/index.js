@@ -6,7 +6,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/login', (req, res) => {
-    res.render('login/login');
+    res.render('login/login', { user: req.user });
 });
 
 router.post('/sendtoken', 
@@ -17,9 +17,7 @@ router.post('/sendtoken',
 });
 
 router.get('/logout', passwordless.logout(), (req, res) => {
-    res.send('See you later!')
+    res.redirect('/');
 })
-
-//router.get('/')
 
 module.exports = router;

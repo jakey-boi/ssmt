@@ -1,13 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Token sent | SSMT</title>
-</head>
-<body>
-    <h1>Token was sent!</h1>
-    <strong>Check your email!</strong>
-</body>
-</html>
+<%- include('../partials/header', { title: 'Recent Posts', user: null }); %>
+    <h1 class="center-align">Token sent!</h1>
+    <p class="center-align">
+        <strong>Check your email for the login URL!</strong>
+        <br>
+        <small>If it isn't in your main inbox, try checking your spam!</small>
+        <br>
+    </p>
+<%- include('../partials/footer'); %>

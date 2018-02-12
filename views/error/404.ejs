@@ -1,13 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Error 404 | SSMT</title>
-</head>
-<body>
-    <h1>That page wasn't found!</h1>
-    <p>Sorry, but that page wasn't found on the server! <a href="/">Head back to the homepage?</a></p>
-</body>
-</html>
+<%- include('../partials/header', { title: '404', user: user }); %>
+    <div class="center-align">
+        <h1>Page not found!</h1>
+        <h3>The page you requested was not found!</h3>
+        <br><br><br>
+        <strong>If you think this is a bug, report it on the <a href="https://github.com/MikeModder/ssmt">GitHub repository!</a></strong>
+        <br><br><br>
+    </div>
+<%- include('../partials/footer'); %>

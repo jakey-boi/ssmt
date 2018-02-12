@@ -1,18 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title><%= username %>'s Profile | SSMT</title>
-</head>
-<body>
-    <% if(me){ %>
-        <strong>This is your profile.</strong><br>
-    <% } else { %>
-        <strong><%= username %>'s profile</strong><br>
-    <% } %>
-
+<%- include('../partials/header', { title: `${user}'s Profile`, user: user }); %>
     <% if(me){ %>
         <strong>Here you can edit your profile:</strong>
         <form action="/user/update" method="post">
@@ -23,8 +9,4 @@
     <% } else { %>
         <%= username %>'s bio: <strong><%= user.bio %></strong>
     <% } %>
-
-    <br><br>
-    <a href="/">Home</a>
-</body>
-</html>
+<%- include('../partials/footer'); %>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title><%= title %> | SSMT</title>
+
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="css/my.css"  media="screen,projection"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+</head>
+<body>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="js/materialize.min.js"></script>
+    <nav>
+        <div class="nav-wrapper">
+            <a href="/" class="brand-logo">SSMT</a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <% if(user){ %>
+                    <li><a href="/posts/new"><i class="small left material-icons">add_circle</i>New post</a></li>
+                    <li><a href="/logout"><i class="small left material-icons">exit_to_app</i>Logout</a></li>
+                    <li><a href="/user/me"><i class="small left material-icons">account_circle</i><%= user %></a></li>
+                <% } else { %>
+                    <li><a href="/posts"><i class="small left material-icons">mail_outline</i>Recent posts</a></li>
+                    <li><a href="/login"><i class="small left material-icons">account_circle</i>Login/Register</a></li>
+                <% } %>
+            </ul>
+        </div>
+    </nav>
+    

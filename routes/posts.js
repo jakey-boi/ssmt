@@ -4,12 +4,12 @@ const passwordless = require('passwordless');
 router.get('/', (req, res) => {
     req.app.locals.db.all('SELECT * FROM posts ORDER BY id DESC LIMIT 5;', (err, rows) => {
         if(err) throw err;
-        res.render('posts/recent', { posts: rows });
+        res.render('posts/recent', { posts: rows, user: req.user });
     });
 });
 
 router.get('/new', passwordless.restricted({ failureRedirect: '/login' }), (req, res) => {
-    res.render('posts/new');
+    res.render('posts/new', { user: req.user });
 });
 
 router.post('/new', passwordless.restricted({ failureRedirect: '/login' }), (req, res) => {

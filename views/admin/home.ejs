@@ -1,11 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Admin Panel | SSMT</title>
-    <script src="https://code.jquery.com/jquery-3.3.0.min.js"></script>
+<%- include('partials/header', { title: 'Admin Page', user: user }); %>
     <script>
         function run(){
             let code = $('#code')[0].value;
@@ -18,8 +11,6 @@
             });
         }
     </script>
-</head>
-<body>
     <textarea name="" id="code" cols="40" rows="10"></textarea><br>
     Code type: 
     <select name="" id="evaltype">
@@ -30,5 +21,4 @@
     <br><br><br>
     <strong>Output:</strong><br>
     <p id="output"></p>
-</body>
-</html>
+<%- include('partials/footer'); %>
