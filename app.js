@@ -13,6 +13,7 @@ const helmet = require('helmet');
 const dd = config.datadog ? require('connect-datadog')({ response_code: true, tags: ['app:ssmt'] }) : null;
 const StatD = config.datadog ? require('node-dogstatsd').StatsD : null;
 let dogStats = config.datadog ? new StatD() : null;
+const snek = require('snekfetch');
 
 const app = express();
 
@@ -47,6 +48,34 @@ passwordless.addDelivery((token, uid, recipient, cb, req) => {
         } else {
             app.locals.db.run('INSERT INTO users (username, email, joinedAt) VALUES (?, ?, ?)', uid, uid,  Date.now(), (err) => {
                 if(err) throw err;
+
+                /* SEND A MESSAGE VIA THE WEBHOOK, IF ENABLED */
+                let isoTime = new Date(Date.now()).toISOString();
+                if(config.discord.userlog.enabled){
+                    let embed = {
+                        title: `New user ${uid}`,
+                        description: `Look, a new user just signed up!`,
+                        timestamp: isoTime,
+                        fields: [
+                            {
+                                name: 'User email:',
+                                value: uid,
+                                inline: true
+                            },
+                            {
+                                name: 'Join timestamp',
+                                value: isoTime,
+                                inline: true
+                            }
+                        ]
+                    };
+                    snek.post(config.discord.userlog.url)
+                        .send({ embeds: [embed] })
+                        .catch(e => { 
+                            console.log(`[ERROR] Error sending webhook! Error was: ${e}`);
+                            config.discord.userlog.enabled = false;
+                        });
+                }
                 if(config.datadog) app.locals.dogStats.increment('ssmt.usercount');
             });
         }

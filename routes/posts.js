@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const passwordless = require('passwordless');
+const snek = require('snekfetch');
 const config = require('../config.json');
 
 router.get('/', (req, res) => {
@@ -23,6 +24,34 @@ router.post('/new', passwordless.restricted({ failureRedirect: '/login' }), (req
             let postId = row['last_insert_rowid()'];
             if(config.datadog) req.app.locals.dogStats.increment('ssmt.postcount');
             res.redirect(`/posts/${postId}`);
+
+            /* SEND A MESSAGE VIA THE WEBHOOK, IF ENABLED */
+            let isoTime = new Date(Date.now()).toISOString();
+            if(config.discord.postlog.enabled){
+                let embed = {
+                    title: `New post ${postId}`,
+                    description: req.body.text,
+                    timestamp: isoTime,
+                    fields: [
+                        {
+                            name: 'Author',
+                            value: req.user,
+                            inline: true
+                        },
+                        {
+                            name: 'Post timestamp',
+                            value: isoTime,
+                            inline: true
+                        }
+                    ]
+                };
+                snek.post(config.discord.postlog.url)
+                    .send({ embeds: [embed] })
+                    .catch(e => { 
+                        console.log(`[ERROR] Error sending webhook! Error was: ${e}`);
+                        config.discord.postlog.enabled = false;
+                    });
+            }
         });
     });
 });
