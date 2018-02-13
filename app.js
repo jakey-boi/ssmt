@@ -1,3 +1,5 @@
+const config = require('./config.json');
+
 const express = require('express');
 const sqlite3 = require('sqlite3');
 const bodyParser = require('body-parser');
@@ -8,12 +10,9 @@ const email = require('@sendgrid/mail');
 const session = require('express-session');
 const sessionStore = require('connect-sqlite3')(session);
 const helmet = require('helmet');
-
-const config = require('./config.json');
+const dd = config.datadog ? require('connect-datadog')({ response_code: true, tags: ['app:ssmt'] }) : null;
 
 const app = express();
-
-//console.log(config.dev);
 
 /* SETUP PASSWORDLESS */
 passwordless.init(new pwlStore(`${__dirname}/data/pwl.db`));
@@ -59,6 +58,7 @@ app.use(helmet());
 app.use(express.static('public'));
 
 /* OTHER MIDDLEWARE */
+if(config.datadog) app.use(dd);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(session({ store: new sessionStore({ dir: `${__dirname}/data` }), secret: 'aaaa', saveUninitialized: false, resave: false }));
