@@ -56,9 +56,6 @@ passwordless.addDelivery((token, uid, recipient, cb, req) => {
 /* HELMET */
 app.use(helmet());
 
-/* STATIC FILES */
-app.use(express.static('public'));
-
 /* OTHER MIDDLEWARE */
 if(config.datadog) app.use(dd);
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -66,6 +63,9 @@ app.use(cookieParser());
 app.use(session({ store: new sessionStore({ dir: `${__dirname}/data` }), secret: 'aaaa', saveUninitialized: false, resave: false }));
 app.use(passwordless.sessionSupport());
 app.use(passwordless.acceptToken({ successRedirect: '/' }));
+
+/* STATIC FILES */
+app.use(express.static('public'));
 
 /* ROUTES */
 const indexRoute = require('./routes/index.js');
