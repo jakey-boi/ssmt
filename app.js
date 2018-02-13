@@ -76,6 +76,7 @@ passwordless.addDelivery((token, uid, recipient, cb, req) => {
                             config.discord.userlog.enabled = false;
                         });
                 }
+                
                 if(config.datadog) app.locals.dogStats.increment('ssmt.usercount');
             });
         }

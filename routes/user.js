@@ -11,7 +11,6 @@ router.get('/me', passwordless.restricted({ failureRedirect: '/login' }), (req, 
 router.post('/update', passwordless.restricted({ failureRedirect: '/login' }), (req, res) => {
     let username = req.body.username;
     let bio = req.body.bio;
-    //UPDATE posts SET points = ? WHERE id = ?'
     req.app.locals.db.run('UPDATE users SET username = ?, bio = ? WHERE email = ?', username, bio, req.user, (err) => {
         if(err) throw err;
         res.redirect(`/user/me`);
@@ -22,7 +21,7 @@ router.get('/:username', (req, res) => {
     if(!req.params.username) res.redirect('/');
     req.app.locals.db.get('SELECT * FROM users WHERE username = ?', req.params.username, (err, row) => {
         if(err) throw err;
-        if(!row) res.send('User not found!');
+        if(!row) res.render('error/404', { user: req.user });
         res.render('user', { username: row.username, user: row, me: false });
     });
 });

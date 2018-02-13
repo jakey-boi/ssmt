@@ -70,7 +70,7 @@ router.post('/vote', passwordless.restricted({ failureRedirect: '/login' }), (re
                 if(err) throw err;
                 res.json({ points: score });
             });
-        })
+        });
     } else if(type === 'down'){
         //downvote
         req.app.locals.db.get('SELECT points FROM posts WHERE id = ?', postId, (err, row) => {
