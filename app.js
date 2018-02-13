@@ -11,8 +11,8 @@ const session = require('express-session');
 const sessionStore = require('connect-sqlite3')(session);
 const helmet = require('helmet');
 const dd = config.datadog ? require('connect-datadog')({ response_code: true, tags: ['app:ssmt'] }) : null;
-const StatD = config.datadog ? require('node-dogstatd') : null;
-let dogStats = new StatD();
+const StatD = config.datadog ? require('node-dogstatsd') : null;
+let dogStats = config.datadog ? new StatD() : null;
 
 const app = express();
 
