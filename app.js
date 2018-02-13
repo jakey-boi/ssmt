@@ -108,5 +108,14 @@ if(config.datadog){
 
 /* LISTEN */
 app.listen(config.port, () => {
-    console.log(`[INFO] Server listening on port 8080!`);
+    console.log(`[INFO] Server listening on port ${config.port}...`);
+    app.locals.stats = {};
+    app.locals.db.all('SELECT * FROM posts', (err, rows) => {
+        if(err) throw err;
+        app.locals.stats.posts = rows.length;
+    });
+    app.locals.db.all('SELECT * FROM users', (err, rows) => {
+        if(err) throw err;
+        app.locals.stats.users = rows.length;
+    });
 });

@@ -2,7 +2,7 @@ const router = require('express').Router();
 const passwordless = require('passwordless');
 
 router.get('/', (req, res) => {
-    res.render('home', { user: req.user });
+    res.render('home', { user: req.user, stats: req.app.locals.stats });
 });
 
 router.get('/login', (req, res) => {
