@@ -1,8 +1,9 @@
 const router = require('express').Router();
 const passwordless = require('passwordless');
+const config = require('../config.json');
 
 router.get('/', (req, res) => {
-    req.app.locals.db.all('SELECT * FROM posts ORDER BY id DESC LIMIT 5;', (err, rows) => {
+    req.app.locals.db.all('SELECT * FROM posts ORDER BY id DESC LIMIT 6;', (err, rows) => {
         if(err) throw err;
         res.render('posts/recent', { posts: rows, user: req.user });
     });
@@ -20,9 +21,10 @@ router.post('/new', passwordless.restricted({ failureRedirect: '/login' }), (req
             if(err) throw err;
             if(!row) res.send('Error getting post ID!');
             let postId = row['last_insert_rowid()'];
+            if(config.datadog) req.app.locals.dogStats.increment('ssmt.postcount');
             res.redirect(`/posts/${postId}`);
         });
-    })
+    });
 });
 
 router.post('/vote', passwordless.restricted({ failureRedirect: '/login' }), (req, res) => {
@@ -37,7 +39,6 @@ router.post('/vote', passwordless.restricted({ failureRedirect: '/login' }), (re
             let score = row.points + 1;
             req.app.locals.db.run('UPDATE posts SET points = ? WHERE id = ?', score, postId, (err) => {
                 if(err) throw err;
-                console.log(`[VOTE] Post [${postId}] points ${row.points} -> ${score}`);
                 res.json({ points: score });
             });
         })
@@ -49,7 +50,6 @@ router.post('/vote', passwordless.restricted({ failureRedirect: '/login' }), (re
             let score = row.points - 1;
             req.app.locals.db.run('UPDATE posts SET points = ? WHERE id = ?', score, postId, (err) => {
                 if(err) throw err;
-                //console.log(`[VOTE] Post [${postId}] points ${row.points} -> ${score}`);
                 res.json({ points: score });
             });
         });
@@ -80,7 +80,7 @@ router.get('/:id', (req, res) => {
     if(!req.params.id) res.redirect('/');
     req.app.locals.db.get('SELECT * FROM posts WHERE id = ?', req.params.id, (err, row) => {
         if(err) throw err;
-        if(!row) res.send('Post not found!');
+        if(!row) res.render('error/404', { user: req.user });
         let canDelete;
         if(req.user === row.poster) canDelete = true;
         res.render('posts/post', { post: row, user: req.user, canDelete });

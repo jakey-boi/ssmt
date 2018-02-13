@@ -47,6 +47,7 @@ passwordless.addDelivery((token, uid, recipient, cb, req) => {
         } else {
             app.locals.db.run('INSERT INTO users (username, email, joinedAt) VALUES (?, ?, ?)', uid, uid,  Date.now(), (err) => {
                 if(err) throw err;
+                if(config.datadog) app.locals.dogStats.increment('ssmt.usercount');
             });
         }
     });
@@ -84,6 +85,7 @@ app.set('views', `${__dirname}/views`);
 
 /* DATABASE & CONFIG */
 app.locals.db = new sqlite3.Database(`${__dirname}/data/ssmt.db`);
+if(config.datadog) app.locals.dogStats = dogStats;
 app.locals.config = require('./config.json');
 
 /* SETUP SENDGRID */
@@ -94,13 +96,13 @@ app.get('*', (req, res) => {
     res.render('error/404', { user: req.user });
 });
 
-/* SEND CURRENT STATS TO DOTADOG */
+/* SEND CURRENT STATS TO DATADOG */
 if(config.datadog){
     app.locals.db.all('SELECT * FROM users', (err, rows) => {
-        dogStats.set('ssmt.usercount', rows.length);
+        app.locals.dogStats.set('ssmt.usercount', rows.length);
     });
     app.locals.db.all('SELECT * FROM posts', (err, rows) => {
-        dogStats.set('ssmt.postcount', rows.length);
+        app.locals.dogStats.set('ssmt.postcount', rows.length);
     });
 }
 
