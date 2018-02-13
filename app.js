@@ -11,6 +11,8 @@ const session = require('express-session');
 const sessionStore = require('connect-sqlite3')(session);
 const helmet = require('helmet');
 const dd = config.datadog ? require('connect-datadog')({ response_code: true, tags: ['app:ssmt'] }) : null;
+const StatD = config.datadog ? require('node-dogstatd') : null;
+let dogStats = new StatD();
 
 const app = express();
 
@@ -91,6 +93,16 @@ email.setApiKey(config.sendgrid.apikey);
 app.get('*', (req, res) => {
     res.render('error/404', { user: req.user });
 });
+
+/* SEND CURRENT STATS TO DOTADOG */
+if(config.datadog){
+    app.locals.db.get('SELECT * FROM users', (err, rows) => {
+        dogStats.set('ssmt.usercount', rows.length);
+    });
+    app.locals.db.get('SELECT * FROM posts', (err, rows) => {
+        dogStats.set('ssmt.postcount', rows.length);
+    });
+}
 
 /* LISTEN */
 app.listen(config.port, () => {
