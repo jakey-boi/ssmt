@@ -96,10 +96,10 @@ app.get('*', (req, res) => {
 
 /* SEND CURRENT STATS TO DOTADOG */
 if(config.datadog){
-    app.locals.db.get('SELECT * FROM users', (err, rows) => {
+    app.locals.db.all('SELECT * FROM users', (err, rows) => {
         dogStats.set('ssmt.usercount', rows.length);
     });
-    app.locals.db.get('SELECT * FROM posts', (err, rows) => {
+    app.locals.db.all('SELECT * FROM posts', (err, rows) => {
         dogStats.set('ssmt.postcount', rows.length);
     });
 }
