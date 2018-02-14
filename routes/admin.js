@@ -1,13 +1,13 @@
 const router = require('express').Router();
 const passwordess = require('passwordless');
 
-router.get('/', passwordess.restricted(), (req, res) => {
+router.get('/', passwordess.restricted({ failureRedirect: '/unauthorized' }), (req, res) => {
     let owner = req.app.locals.config.owner;
-    if(req.user !== owner) return res.redirect('/');
+    if(req.user !== owner) return res.render('error/401', { user: req.user });
     res.render('admin/home', { user: req.user });
 });
 
-router.post('/eval', passwordess.restricted(), (req, res) => {
+router.post('/eval', passwordess.restricted({ failureRedirect: '/unauthorized' }), (req, res) => {
     let owner = req.app.locals.config.owner;
     if(req.user !== owner) return res.redirect('/');
     let code = req.body.code;

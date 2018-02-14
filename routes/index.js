@@ -20,6 +20,10 @@ router.get('/logout', passwordless.logout(), (req, res) => {
     res.redirect('/');
 });
 
+router.get('/unauthorized', (req, res) => {
+    res.render('error/401', { user: req.user });
+});
+
 router.get('/health-check', (req, res) => {
     res.status(200).json({ msg: 'The server is running!', ip: req.ip });
 });
