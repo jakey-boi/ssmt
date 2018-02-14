@@ -1,4 +1,4 @@
-<%- include('../partials/header', { title: `Post ${post.id}`, user: user, desc: `A post by ${post.poster} reading: ${post.text` }); %>
+<%- include('../partials/header', { title: `Post ${post.id}`, user: user, desc: `A post by ${post.poster} reading: ${post.text}` }); %>
 <% if(user){ %>
     <script>
         const pId = <%= post.id %>;
