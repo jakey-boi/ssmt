@@ -146,11 +146,11 @@ MongoClient.connect('mongodb://localhost', (err, client) => {
     if(config.datadog){
         app.locals.db.find().count((err, res) => {
             if(err) throw err;
-            app.locals.dogStats.set('ssmt.postcount', rows.length);
+            app.locals.dogStats.set('ssmt.postcount', res);
         });
         app.locals.userdb.find().count((err, res) => {
             if(err) throw err;
-            app.locals.dogStats.set('ssmt.usercount', rows.length);
+            app.locals.dogStats.set('ssmt.usercount', res);
         });
     }
 });
