@@ -144,11 +144,11 @@ MongoClient.connect('mongodb://localhost', (err, client) => {
 
     /* SEND CURRENT STATS TO DATADOG */
     if(config.datadog){
-        app.locals.db.count((err, res) => {
+        app.locals.db.find().count((err, res) => {
             if(err) throw err;
             app.locals.dogStats.set('ssmt.postcount', rows.length);
         });
-        app.locals.userdb.count((err, res) => {
+        app.locals.userdb.find().count((err, res) => {
             if(err) throw err;
             app.locals.dogStats.set('ssmt.usercount', rows.length);
         });
