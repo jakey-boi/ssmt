@@ -1,0 +1,12 @@
+<%- include('../partials/header', { title: `${user.username}'s Profile`, user: user, desc: `${user.username}'s prfile page on SSMT!` }); %>
+<div class="container">
+    <strong>Here you can edit your profile:</strong>
+    <form action="/user/update" method="post">
+        Username: <input type="text" name="username" value="<%= user.username %>"><br>
+        Bio: <input type="text" name="bio" value="<%= user.bio %>"><br>
+        <button type="submit"><i class="small left material-icons">send</i>Update</button>
+    </form>
+    
+</div>
+</br>
+<%- include('../partials/footer'); %>

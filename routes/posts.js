@@ -1,12 +1,32 @@
 const router = require('express').Router();
 const passwordless = require('passwordless');
 const snek = require('snekfetch');
+const ObjectId = require('mongodb').ObjectId;
+const eachOf = require('async').eachOf;
 const config = require('../config.json');
 
 router.get('/', (req, res) => {
-    req.app.locals.db.all('SELECT * FROM posts ORDER BY id DESC LIMIT 6;', (err, rows) => {
+    req.app.locals.db.find().limit(6).toArray((err, docs) => {
         if(err) throw err;
-        res.render('posts/recent', { posts: rows, user: req.user });
+        let prettyDocs = [];
+        eachOf(docs, (doc, key, cb) => {
+            let id = new ObjectId(doc.poster);
+            req.app.locals.userdb.findOne(id, (err, poster) => {
+                if(err) throw err;
+                doc.poster = {
+                    username: poster.username,
+                    id: poster._id
+                };
+                doc.createdAt = require('moment')(doc.createdAt).toNow(true);
+                //console.log(doc);
+                prettyDocs.push(doc);
+                cb();
+            });
+        }, (err) => {
+            if(err) throw err;
+            res.render('posts/recent', { posts: prettyDocs, user: req.user });
+        });
+        
     });
 });
 
@@ -15,78 +35,53 @@ router.get('/new', passwordless.restricted({ failureRedirect: '/login' }), (req,
 });
 
 router.post('/new', passwordless.restricted({ failureRedirect: '/login' }), (req, res) => {
-    if(!req.body.text) res.send('Missing text!');
-    req.app.locals.db.run('INSERT INTO posts (text, poster) VALUES (?, ?)', req.body.text, req.user, (err, ok) => {
+    if(!req.body.text) return res.render('error/generic', { user: req.user, msg: 'Missing post body!' });
+    req.app.locals.db.insertOne({ text: req.body.text, poster: req.user._id }, (err, response) => {
         if(err) throw err;
-        req.app.locals.db.get('SELECT last_insert_rowid()', (err, row) => {
-            if(err) throw err;
-            if(!row) res.send('Error getting post ID!');
-            let postId = row['last_insert_rowid()'];
-            if(config.datadog) req.app.locals.dogStats.increment('ssmt.postcount');
-            res.redirect(`/posts/${postId}`);
+        let postId = response.insertedId;
+        res.redirect(`/posts/${postId}`);
 
-            /* SEND A MESSAGE VIA THE WEBHOOK, IF ENABLED */
-            let isoTime = new Date(Date.now()).toISOString();
-            if(config.discord.postlog.enabled){
-                let embed = {
-                    title: `New post ${postId}`,
-                    description: req.body.text,
-                    timestamp: isoTime,
-                    fields: [
-                        {
-                            name: 'Author',
-                            value: req.user,
-                            inline: true
-                        },
-                        {
-                            name: 'Post timestamp',
-                            value: isoTime,
-                            inline: true
-                        }
-                    ]
-                };
-                snek.post(config.discord.postlog.url)
-                    .send({ embeds: [embed] })
-                    .catch(e => { 
-                        console.log(`[ERROR] Error sending webhook! Error was: ${e}`);
-                        config.discord.postlog.enabled = false;
-                    });
-            }
-        });
+        // SEND A MESSAGE VIA THE WEBHOOK, IF ENABLED 
+        let isoTime = new Date(Date.now()).toISOString();
+        if(config.discord.postlog.enabled){
+            let embed = {
+                title: `New post ${postId}`,
+                description: req.body.text,
+                timestamp: isoTime,
+                fields: [
+                    {
+                        name: 'Author',
+                        value: `${req.user.username} (${req.user._id})`,
+                        inline: true
+                    },
+                    {
+                        name: 'Post timestamp',
+                        value: isoTime,
+                        inline: true
+                    }
+                ]
+            };
+            snek.post(config.discord.postlog.url)
+                .send({ embeds: [embed] })
+                .catch(e => { 
+                    console.log(`[ERROR] Error sending webhook! Error was: ${e}`);
+                    config.discord.postlog.enabled = false;
+                });
+        }
     });
 });
 
-router.post('/vote', passwordless.restricted({ failureRedirect: '/login' }), (req, res) => {
+/*router.post('/vote', passwordless.restricted({ failureRedirect: '/login' }), (req, res) => {
     let postId = req.body.postId;
-    let type = req.body.type;
-    if(!postId || !type) res.send('Missing info to vote!');
-    if(type === 'up'){
-        //upvote
-        req.app.locals.db.get('SELECT points FROM posts WHERE id = ?', postId, (err, row) => {
-            if(err) throw err;
-            if(!row) res.send('Cannot vote on non-existent post!');
-            let score = row.points + 1;
-            req.app.locals.db.run('UPDATE posts SET points = ? WHERE id = ?', score, postId, (err) => {
-                if(err) throw err;
-                res.json({ points: score });
-            });
-        });
-    } else if(type === 'down'){
-        //downvote
-        req.app.locals.db.get('SELECT points FROM posts WHERE id = ?', postId, (err, row) => {
-            if(err) throw err;
-            if(!row) res.send('Cannot vote on non-existent post!');
-            let score = row.points - 1;
-            req.app.locals.db.run('UPDATE posts SET points = ? WHERE id = ?', score, postId, (err) => {
-                if(err) throw err;
-                res.json({ points: score });
-            });
-        });
-    } else {
-        //invalid
-
-    }
-});
+    if(!postId || !ObjectId.isValid(id)) return res.render('error/generic', { user: req.user, msg: `If you're going to do this, at least do it right!` });
+    
+    req.app.locals.db.findOne(new ObjectId(id), (err, doc) => {
+        if(err) throw err;
+        if(doc === null) return res.render('error/404', { user: req.user });
+        //The post exists, so see if the likes array has the user
+        req.app.locals.db.findOne({ _id: new ObjectId(id), likes: new ObjectId(id) })
+    });
+});*/
 
 /*router.post('/posts/delete', passwordless.restricted({ failureRedirect: '/login' }), (req, res) => {
     let pageId = req.body.pageId;
@@ -106,13 +101,19 @@ router.post('/vote', passwordless.restricted({ failureRedirect: '/login' }), (re
 });*/
 
 router.get('/:id', (req, res) => {
-    if(!req.params.id) res.redirect('/');
-    req.app.locals.db.get('SELECT * FROM posts WHERE id = ?', req.params.id, (err, row) => {
+    let id = req.params.id;
+    if(!id || !ObjectId.isValid(id)) res.redirect('/posts');
+    req.app.locals.db.findOne(new ObjectId(id), (err, doc) => {
         if(err) throw err;
-        if(!row) res.render('error/404', { user: req.user });
-        let canDelete;
-        if(req.user === row.poster) canDelete = true;
-        res.render('posts/post', { post: row, user: req.user, canDelete });
+        if(doc === null) return res.render('error/404', { user: req.user });
+        req.app.locals.userdb.findOne(new ObjectId(doc.poster), (err, user) => {
+            if(err) throw err;
+            doc.poster = {
+                username: user.username,
+                id: user._id
+            };
+            res.render('posts/post', { post: doc, user: req.user });
+        });
     });
 });
 

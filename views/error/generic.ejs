@@ -1,0 +1,10 @@
+<%- include('../partials/header', { title: 'Error!', user: user, desc: 'There was an error!' }); %>
+    <div class="center-align">
+        <h1>Error!</h1>
+        <h3>Error message: <%= msg %></h3>
+        <br><br><br>
+        <strong>If you think this is a bug, report it on the <a href="https://github.com/MikeModder/ssmt">GitHub repository!</a></strong>
+        <br><br><br>
+        <small>This is a generic error page, so it might not be very helpful.</small>
+    </div>
+<%- include('../partials/footer'); %>

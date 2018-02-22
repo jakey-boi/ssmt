@@ -1,14 +1,14 @@
 const config = require('./config.json');
 
 const express = require('express');
-const sqlite3 = require('sqlite3');
+const MongoClient = require('mongodb').MongoClient;
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const passwordless = require('passwordless');
-const pwlStore = require('passwordless-sqlite3store');
+const pwlStore = require('passwordless-mongostore');
 const email = require('@sendgrid/mail');
 const session = require('express-session');
-const sessionStore = require('connect-sqlite3')(session);
+const sessionStore = require('connect-mongo')(session);
 const helmet = require('helmet');
 const dd = config.datadog ? require('connect-datadog')({ response_code: true, tags: ['app:ssmt'] }) : null;
 const StatD = config.datadog ? require('node-dogstatsd').StatsD : null;
@@ -18,7 +18,7 @@ const snek = require('snekfetch');
 const app = express();
 
 /* SETUP PASSWORDLESS */
-passwordless.init(new pwlStore(`${__dirname}/data/pwl.db`));
+passwordless.init(new pwlStore(`mongodb://localhost/passwordless`));
 passwordless.addDelivery((token, uid, recipient, cb, req) => {
     let host = config.host;
     let msg = {
@@ -26,7 +26,7 @@ passwordless.addDelivery((token, uid, recipient, cb, req) => {
         from: 'no-reply@vps.unsafe.men',
         subject: 'SSMT Login Token',
         html: `Here's your login URL: <a href="http://${host}/?token=${token}&uid=${encodeURIComponent(uid)}">http://${host}/?token=${token}&uid=${encodeURIComponent(uid)}</a>`
-    }
+    };
     if(config.dev){
         console.log(`http://${host}/?token=${token}&uid=${encodeURIComponent(uid)}`);
         cb(null);
@@ -41,15 +41,15 @@ passwordless.addDelivery((token, uid, recipient, cb, req) => {
             });
     }
 
-    app.locals.db.get('SELECT * FROM users WHERE email = ?', uid, (err, row) => {
+    app.locals.userdb.findOne({ email: uid }, (err, doc) => {
         if(err) throw err;
-        if(row){
-            //do nothing
+        if(doc){
+
         } else {
-            app.locals.db.run('INSERT INTO users (username, email, joinedAt) VALUES (?, ?, ?)', uid, uid,  Date.now(), (err) => {
+            app.locals.userdb.insertOne({ username: uid, email: uid, joinedAt: Date.now(), bio: '' }, (err, res) => {
                 if(err) throw err;
 
-                /* SEND A MESSAGE VIA THE WEBHOOK, IF ENABLED */
+                // SEND A MESSAGE VIA THE WEBHOOK, IF ENABLED 
                 let isoTime = new Date(Date.now()).toISOString();
                 if(config.discord.userlog.enabled){
                     let embed = {
@@ -76,12 +76,9 @@ passwordless.addDelivery((token, uid, recipient, cb, req) => {
                             config.discord.userlog.enabled = false;
                         });
                 }
-                
-                if(config.datadog) app.locals.dogStats.increment('ssmt.usercount');
             });
         }
     });
-
 });
 
 /* HELMET */
@@ -91,9 +88,22 @@ app.use(helmet());
 if(config.datadog) app.use(dd);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(session({ store: new sessionStore({ dir: `${__dirname}/data` }), secret: 'aaaa', saveUninitialized: false, resave: false }));
+app.use(session({ store: new sessionStore({ url: `mongodb://localhost/e-sessions` }), secret: 'aaaa', saveUninitialized: false, resave: false }));
 app.use(passwordless.sessionSupport());
 app.use(passwordless.acceptToken({ successRedirect: '/' }));
+
+/* ADD MORE INFO ABOUT THE USER, IF AUTHENTICATED */
+app.use((req, res, next) => {
+    if(req.user){
+        app.locals.userdb.findOne({ email: req.user }, (err, doc) => {
+            if(err) throw err;
+            req.user = doc;
+            next();
+        });
+    } else {
+        next();
+    }
+});
 
 /* STATIC FILES */
 app.use(express.static('public'));
@@ -114,7 +124,36 @@ app.set('view engine', 'ejs');
 app.set('views', `${__dirname}/views`);
 
 /* DATABASE & CONFIG */
-app.locals.db = new sqlite3.Database(`${__dirname}/data/ssmt.db`);
+//app.locals.db = new sqlite3.Database(`${__dirname}/data/ssmt.db`);
+MongoClient.connect('mongodb://localhost', (err, client) => {
+    if(err) throw err;
+    console.log(`[DB] Connection OK`);
+    let db = client.db('ssmt');
+    app.locals.db = db.collection('posts');
+    app.locals.userdb = db.collection('users');
+    
+    app.locals.stats = {};
+    app.locals.db.find().count((err, res) => {
+        if(err) throw err;
+        app.locals.stats.posts = res;
+    });
+    app.locals.userdb.find().count((err, res) => {
+        if(err) throw err;
+        app.locals.stats.users = res;
+    });
+
+    /* SEND CURRENT STATS TO DATADOG */
+    if(config.datadog){
+        app.locals.db.count((err, res) => {
+            if(err) throw err;
+            app.locals.dogStats.set('ssmt.postcount', rows.length);
+        });
+        app.locals.userdb.count((err, res) => {
+            if(err) throw err;
+            app.locals.dogStats.set('ssmt.usercount', rows.length);
+        });
+    }
+});
 if(config.datadog) app.locals.dogStats = dogStats;
 app.locals.config = require('./config.json');
 
@@ -126,26 +165,7 @@ app.get('*', (req, res) => {
     res.render('error/404', { user: req.user });
 });
 
-/* SEND CURRENT STATS TO DATADOG */
-if(config.datadog){
-    app.locals.db.all('SELECT * FROM users', (err, rows) => {
-        app.locals.dogStats.set('ssmt.usercount', rows.length);
-    });
-    app.locals.db.all('SELECT * FROM posts', (err, rows) => {
-        app.locals.dogStats.set('ssmt.postcount', rows.length);
-    });
-}
-
 /* LISTEN */
 app.listen(config.port, () => {
     console.log(`[INFO] Server listening on port ${config.port}...`);
-    app.locals.stats = {};
-    app.locals.db.all('SELECT * FROM posts', (err, rows) => {
-        if(err) throw err;
-        app.locals.stats.posts = rows.length;
-    });
-    app.locals.db.all('SELECT * FROM users', (err, rows) => {
-        if(err) throw err;
-        app.locals.stats.users = rows.length;
-    });
 });

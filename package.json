@@ -4,25 +4,28 @@
   "description": "SSMT",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
   },
   "author": "MikeModder",
-  "license": "ISC",
+  "license": "GPLv3",
   "dependencies": {
     "@sendgrid/mail": "^6.2.1",
+    "async": "^2.6.0",
     "body-parser": "^1.18.2",
     "connect-datadog": "0.0.6",
-    "connect-sqlite3": "^0.9.10",
+    "connect-mongo": "^2.0.1",
     "cookie-parser": "^1.4.3",
     "ejs": "^2.5.7",
     "express": "^4.16.2",
     "express-session": "^1.15.6",
     "helmet": "^3.11.0",
+    "moment": "^2.20.1",
+    "mongodb": "^3.0.2",
     "node-dogstatsd": "0.0.7",
     "passwordless": "^1.1.2",
-    "passwordless-sqlite3store": "^1.0.0",
+    "passwordless-mongostore": "^0.1.4",
     "pmx": "^1.5.6",
-    "snekfetch": "^3.6.4",
-    "sqlite3": "^3.1.13"
+    "snekfetch": "^3.6.4"
   }
 }

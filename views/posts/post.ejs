@@ -1,29 +1,27 @@
-<%- include('../partials/header', { title: `Post ${post.id}`, user: user, desc: `A post by ${post.poster} reading: ${post.text}` }); %>
+<%- include('../partials/header', { title: `Post by ${post.poster.id}`, user: user, desc: `A post by ${post.poster} reading: ${post.text}` }); %>
+<!--
 <% if(user){ %>
     <script>
-        const pId = <%= post.id %>;
+        const pId = '<%= post._id %>';
             function upVote(){
-                $.post('/posts/vote', { postId: pId, type: 'up' }, (resp, status) => {
-                    $('#points').text(`${resp.points} points`);
-                });
-            }
-            
-            function downVote(){
-                $.post('/posts/vote', { postId: pId, type: 'down' }, (resp, status) => {
-                    $('#points').text(`${resp.points} points`);
+                $.post('/posts/like', { postId: pId }, (resp, status) => {
+                    $('#points').text(`${resp.points} likes`);
                 });
             }
     </script>
 <% } %>
-<strong><%= post.text %></strong>
-<br>
-<small>Posted by <%= post.poster %></small>
-<br><br>
-<small id="points"><%= post.points %> points</small><br>
-<% if(user){ %>
-    <button onclick="upVote()">upvote</button>
-    <button onclick="downVote()">downvote</button><br>
-<% } else { %>
-    <small>You must <a href="/login">login/signup</a> to vote on posts!</small><br>
-<% } %>
+-->
+<div class="container">
+    <h3 class="center-align"><%= post.text %></h3>
+    <br><br><br>
+    <hr>
+    <small class="center-align">Posted by <a href="/user/<%= post.poster.id %>"><%= post.poster.username %></a></small> <!-- | <small id="points"><%= post.points %> likes</small><br> -->
+    <!--
+    <% if(user){ %>
+        <button onclick="upVote()">Like</button>
+    <% } else { %>
+        <small>You must <a href="/login">login/signup</a> to like posts!</small><br>
+    <% } %>
+    -->
+    </div>
 <%- include('../partials/footer'); %>
