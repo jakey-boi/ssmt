@@ -36,7 +36,7 @@ router.get('/new', passwordless.restricted({ failureRedirect: '/login' }), (req,
 
 router.post('/new', passwordless.restricted({ failureRedirect: '/login' }), (req, res) => {
     if(!req.body.text) return res.render('error/generic', { user: res.locals.user, msg: 'Missing post body!' });
-    req.app.locals.db.insertOne({ text: req.body.text, poster: res.locals.user._id }, (err, response) => {
+    req.app.locals.db.insertOne({ text: req.body.text, poster: res.locals.user._id, createdAt: Date.now() }, (err, response) => {
         if(err) throw err;
         let postId = response.insertedId;
         res.redirect(`/posts/${postId}`);
