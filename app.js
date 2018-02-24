@@ -97,7 +97,7 @@ app.use((req, res, next) => {
     if(req.user){
         app.locals.userdb.findOne({ email: req.user }, (err, doc) => {
             if(err) throw err;
-            req.user = doc;
+            res.locals.user = doc;
             next();
         });
     } else {

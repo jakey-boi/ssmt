@@ -24,19 +24,19 @@ router.get('/', (req, res) => {
             });
         }, (err) => {
             if(err) throw err;
-            res.render('posts/recent', { posts: prettyDocs, user: req.user });
+            res.render('posts/recent', { posts: prettyDocs, user: res.locals.user });
         });
         
     });
 });
 
 router.get('/new', passwordless.restricted({ failureRedirect: '/login' }), (req, res) => {
-    res.render('posts/new', { user: req.user });
+    res.render('posts/new', { user: res.locals.user });
 });
 
 router.post('/new', passwordless.restricted({ failureRedirect: '/login' }), (req, res) => {
-    if(!req.body.text) return res.render('error/generic', { user: req.user, msg: 'Missing post body!' });
-    req.app.locals.db.insertOne({ text: req.body.text, poster: req.user._id }, (err, response) => {
+    if(!req.body.text) return res.render('error/generic', { user: res.locals.user, msg: 'Missing post body!' });
+    req.app.locals.db.insertOne({ text: req.body.text, poster: res.locals.user._id }, (err, response) => {
         if(err) throw err;
         let postId = response.insertedId;
         res.redirect(`/posts/${postId}`);
@@ -51,7 +51,7 @@ router.post('/new', passwordless.restricted({ failureRedirect: '/login' }), (req
                 fields: [
                     {
                         name: 'Author',
-                        value: `${req.user.username} (${req.user._id})`,
+                        value: `${res.locals.user.username} (${res.locals.user._id})`,
                         inline: true
                     },
                     {
@@ -105,14 +105,14 @@ router.get('/:id', (req, res) => {
     if(!id || !ObjectId.isValid(id)) res.redirect('/posts');
     req.app.locals.db.findOne(new ObjectId(id), (err, doc) => {
         if(err) throw err;
-        if(doc === null) return res.render('error/404', { user: req.user });
+        if(doc === null) return res.render('error/404', { user: res.locals.user });
         req.app.locals.userdb.findOne(new ObjectId(doc.poster), (err, user) => {
             if(err) throw err;
             doc.poster = {
                 username: user.username,
                 id: user._id
             };
-            res.render('posts/post', { post: doc, user: req.user });
+            res.render('posts/post', { post: doc, user: res.locals.user });
         });
     });
 });

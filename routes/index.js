@@ -2,11 +2,11 @@ const router = require('express').Router();
 const passwordless = require('passwordless');
 
 router.get('/', (req, res) => {
-    res.render('home', { user: req.user, stats: req.app.locals.stats });
+    res.render('home', { user: res.locals.user, stats: req.app.locals.stats });
 });
 
 router.get('/login', (req, res) => {
-    res.render('login/login', { user: req.user });
+    res.render('login/login', { user: res.locals.user });
 });
 
 router.post('/sendtoken', 
@@ -21,7 +21,7 @@ router.get('/logout', passwordless.logout(), (req, res) => {
 });
 
 router.get('/unauthorized', (req, res) => {
-    res.render('error/401', { user: req.user });
+    res.render('error/401', { user: res.locals.user });
 });
 
 router.get('/health-check', (req, res) => {

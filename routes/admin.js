@@ -3,8 +3,8 @@ const passwordess = require('passwordless');
 
 router.get('/', passwordess.restricted({ failureRedirect: '/unauthorized' }), (req, res) => {
     let owner = req.app.locals.config.owner;
-    if(req.user !== owner) return res.render('error/401', { user: req.user });
-    res.render('admin/home', { user: req.user });
+    if(req.user !== owner) return res.render('error/401', { user: res.locals.user });
+    res.render('admin/home', { user: res.locals.user });
 });
 
 router.post('/eval', passwordess.restricted({ failureRedirect: '/unauthorized' }), (req, res) => {

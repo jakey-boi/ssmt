@@ -4,11 +4,11 @@ const ObjectId = require('mongodb').ObjectId;
 const eachOf = require('async').eachOf;
 
 router.get('/me', passwordless.restricted({ failureRedirect: '/login' }), (req, res) => {
-    req.app.locals.userdb.findOne({ email: req.user.email }, (err, doc) => {
+    req.app.locals.userdb.findOne({ email: req.user }, (err, doc) => {
         if(err) throw err;
-        if(doc === null) return res.render('error/404', { user: req.user });
-        req.app.locals.db.find({ poster: new ObjectId(req.user._id) }).toArray((err, docs) => {
-            res.render('user/me', { user: doc, posts: docs });
+        if(doc === null) return res.render('error/404', { user: res.locals.user });
+        req.app.locals.db.find({ poster: new ObjectId(res.locals.user._id) }).toArray((err, docs) => {
+            res.render('user/me', { user: res.locals.user, posts: docs });
         });
     });
 });
@@ -17,8 +17,7 @@ router.post('/update', passwordless.restricted({ failureRedirect: '/login' }), (
     let username = req.body.username;
     let bio = req.body.bio;
 
-    console.log(req.user);
-    req.app.locals.userdb.findOneAndUpdate(new ObjectId(req.user._id), { $set: { username: username, bio: bio } }, (err, result) => {
+    req.app.locals.userdb.findOneAndUpdate({ email: req.user }, { $set: { username: username, bio: bio } }, (err, result) => {
         if(err) throw err;
         res.redirect('/user/me');
     });
@@ -26,10 +25,10 @@ router.post('/update', passwordless.restricted({ failureRedirect: '/login' }), (
 
 router.get('/:identifier', (req, res) => {
     let id = req.params.identifier;
-    if(!ObjectId.isValid(id)) return res.render('error/404', { user: req.user });
+    if(!ObjectId.isValid(id)) return res.render('error/404', { user: res.locals.user });
     req.app.locals.userdb.findOne(new ObjectId(id), (err, doc) => {
         if(err) throw err;
-        if(doc === null) return res.render('error/404', { user: req.user });
+        if(doc === null) return res.render('error/404', { user: res.locals.user });
         //That was a valid user ID, return the profile page
         req.app.locals.db.find({ poster: new ObjectId(id) }).toArray((err, docs) => {
             //
@@ -48,7 +47,7 @@ router.get('/:identifier', (req, res) => {
                 });
             }, (err) => {
                 if(err) throw err;
-                res.render('user/user', { user: req.user, puser: doc, posts: docs  });
+                res.render('user/user', { user: res.locals.user, puser: doc, posts: docs  });
             });
             //
         });
