@@ -7,7 +7,7 @@ const marked = require('marked');
 const config = require('../config.json');
 
 router.get('/', (req, res) => {
-    req.app.locals.db.find().limit(6).toArray((err, docs) => {
+    req.app.locals.db.find().limit(6).sort({ createdAt: -1 }).toArray((err, docs) => {
         if(err) throw err;
         let prettyDocs = [];
         eachOf(docs, (doc, key, cb) => {

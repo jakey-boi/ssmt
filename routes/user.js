@@ -35,7 +35,7 @@ router.get('/:identifier', (req, res) => {
         if(err) throw err;
         if(doc === null) return res.render('error/404', { user: res.locals.user });
         //That was a valid user ID, return the profile page
-        req.app.locals.db.find({ poster: new ObjectId(id) }).toArray((err, docs) => {
+        req.app.locals.db.find({ poster: new ObjectId(id) }).limit(4).sort({ createdAt: -1 }).toArray((err, docs) => {
             //
             let prettyDocs = [];
             eachOf(docs, (doc, key, cb) => {
