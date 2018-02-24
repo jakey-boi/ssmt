@@ -49,10 +49,12 @@ router.get('/:identifier', (req, res) => {
                     doc.text = marked(doc.text);
                     doc.createdAt = require('moment')(doc.createdAt).toNow(true);
                     prettyDocs.push(doc);
+                    
                     cb();
                 });
             }, (err) => {
                 if(err) throw err;
+                doc.bio = marked(doc.bio);
                 res.render('user/user', { user: res.locals.user, puser: doc, posts: docs  });
             });
             //
