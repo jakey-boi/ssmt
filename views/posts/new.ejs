@@ -1,8 +1,46 @@
 <%- include('../partials/header', { title: 'New Post', user: user, desc: 'Write a new post on SSMT!' }); %>
+    <script src="/js/marked.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('ul.tabs').tabs();
+        });
+
+        let updatePreview = () => {
+            //The user clicked the preview tab, let's render their input!
+            let input = $('textarea#text').val();
+            let rendered = marked(input);
+            $('div#preview-tab').html(rendered);
+        }
+       
+    </script>
     <h2 class="center-align">Write a new post!</h2>
     <h5 class="center-align">When posting, ensure all content is kept SFW (Safe for Work)!</h5>
     <br><br>
     <div class="container">
+        <div class="row">
+                <div class="col s12">
+                    <ul class="tabs">
+                        <li class="tab col s6 active"><a href="#edit-tab">Edit</a></li>
+                        <li class="tab col s6"><a href="#preview-tab" onclick="updatePreview()">Preview</a></li>
+                    </ul>
+                </div>
+                <div class="col s12" id="edit-tab">
+                    <!-- Editor tab -->
+                    <div class="input-field center-align col6">
+                        <form action="/posts/new" method="post">
+                            Write your post here:
+                            <textarea name="text" id="text" cols="30" rows="20" style="display: inline;"></textarea>
+                            <label for="text">Enter the post content here!</label>
+                            <button type="submit"><i class="small left material-icons">send</i>Submit</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col s12" id="preview-tab">
+                    <!-- Preview tab -->
+                </div>
+        </div>
+    </div>
+    <!--<div class="container">
         <div class="input-field center-align col6">
             <form action="/posts/new" method="post">
                 Write your post here:
@@ -11,6 +49,6 @@
                 <button type="submit"><i class="small left material-icons">send</i>Submit</button>
             </form>
         </div>
-    </div>
+    </div>-->
     <br><br>
 <%- include('../partials/footer'); %>

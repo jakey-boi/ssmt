@@ -3,6 +3,7 @@ const passwordless = require('passwordless');
 const snek = require('snekfetch');
 const ObjectId = require('mongodb').ObjectId;
 const eachOf = require('async').eachOf;
+const marked = require('marked');
 const config = require('../config.json');
 
 router.get('/', (req, res) => {
@@ -20,6 +21,7 @@ router.get('/', (req, res) => {
                 };
                 doc.createdAt = require('moment')(doc.createdAt).toNow(true);
                 //console.log(doc);
+                doc.text = marked(doc.text);
                 prettyDocs.push(doc);
                 cb();
             });
@@ -114,6 +116,7 @@ router.get('/:id', (req, res) => {
                 id: user._id,
                 color: user.profile.color
             };
+            doc.text = marked(doc.text);
             res.render('posts/post', { post: doc, user: res.locals.user });
         });
     });

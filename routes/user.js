@@ -3,6 +3,7 @@ const passwordless = require('passwordless');
 const ObjectId = require('mongodb').ObjectId;
 const eachOf = require('async').eachOf;
 const isHexColor = require('validator').isHexColor;
+const marked = require('marked');
 
 router.get('/me', passwordless.restricted({ failureRedirect: '/login' }), (req, res) => {
     req.app.locals.userdb.findOne({ email: req.user }, (err, doc) => {
@@ -45,6 +46,7 @@ router.get('/:identifier', (req, res) => {
                         username: poster.username,
                         id: poster._id
                     };
+                    doc.text = marked(doc.text);
                     doc.createdAt = require('moment')(doc.createdAt).toNow(true);
                     prettyDocs.push(doc);
                     cb();
