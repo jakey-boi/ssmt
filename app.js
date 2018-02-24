@@ -60,12 +60,12 @@ passwordless.addDelivery((token, uid, recipient, cb, req) => {
                             {
                                 name: 'User email:',
                                 value: uid,
-                                inline: true
+                                inline: false
                             },
                             {
                                 name: 'Join timestamp',
                                 value: isoTime,
-                                inline: true
+                                inline: false
                             }
                         ]
                     };

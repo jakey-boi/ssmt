@@ -52,12 +52,12 @@ router.post('/new', passwordless.restricted({ failureRedirect: '/login' }), (req
                     {
                         name: 'Author',
                         value: `${res.locals.user.username} (${res.locals.user._id})`,
-                        inline: true
+                        inline: false
                     },
                     {
                         name: 'Post timestamp',
                         value: isoTime,
-                        inline: true
+                        inline: false
                     }
                 ]
             };
