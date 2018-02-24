@@ -15,7 +15,7 @@
     <h3 class="center-align"><%= post.text %></h3>
     <br><br><br>
     <hr>
-    <small class="center-align">Posted by <a href="/user/<%= post.poster.id %>"><%= post.poster.username %></a></small> <!-- | <small id="points"><%= post.points %> likes</small><br> -->
+    <small class="center-align">Posted by <a href="/user/<%= post.poster.id %>" style="color: <%= post.poster.color %>"><%= post.poster.username %></a></small> <!-- | <small id="points"><%= post.points %> likes</small><br> -->
     <!--
     <% if(user){ %>
         <button onclick="upVote()">Like</button>

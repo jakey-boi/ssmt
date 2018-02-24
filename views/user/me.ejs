@@ -4,6 +4,8 @@
     <form action="/user/update" method="post">
         Username: <input type="text" name="username" value="<%= user.username %>"><br>
         Bio: <input type="text" name="bio" value="<%= user.bio %>"><br>
+        Custom color: <input type="text" name="color" value="<%= user.profile.color %>"><br>
+
         <button type="submit"><i class="small left material-icons">send</i>Update</button>
     </form>
     

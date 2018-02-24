@@ -2,6 +2,7 @@ const router = require('express').Router();
 const passwordless = require('passwordless');
 const ObjectId = require('mongodb').ObjectId;
 const eachOf = require('async').eachOf;
+const isHexColor = require('validator').isHexColor;
 
 router.get('/me', passwordless.restricted({ failureRedirect: '/login' }), (req, res) => {
     req.app.locals.userdb.findOne({ email: req.user }, (err, doc) => {
@@ -16,8 +17,11 @@ router.get('/me', passwordless.restricted({ failureRedirect: '/login' }), (req, 
 router.post('/update', passwordless.restricted({ failureRedirect: '/login' }), (req, res) => {
     let username = req.body.username;
     let bio = req.body.bio;
+    let color = req.body.color || '#1300FF';
+    if(!isHexColor(color)) color = '#1300FF';
+    if(!color.startsWith('#')) color = '#' + color;
 
-    req.app.locals.userdb.findOneAndUpdate({ email: req.user }, { $set: { username: username, bio: bio } }, (err, result) => {
+    req.app.locals.userdb.findOneAndUpdate({ email: req.user }, { $set: { username: username, bio: bio, profile: { color: color } } }, (err, result) => {
         if(err) throw err;
         res.redirect('/user/me');
     });

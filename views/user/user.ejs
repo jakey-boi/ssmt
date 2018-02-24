@@ -1,10 +1,10 @@
 <%- include('../partials/header', { title: `${puser.username}'s Profile`, user: user, desc: `${puser.username}'s prfile page on SSMT!` }); %>
     <div class="container">
-        <h4 class="center-align">Welcome to <%= puser.username %>'s page! </h1>
+        <h4 class="center-align">Welcome to <span style="color: <%= puser.profile.color %>"><%= puser.username %></span>'s page! </h1>
             <br>
-            <%= puser.username %>'s bio: <strong><%= puser.bio %></strong>
+            <span style="color: <%= puser.profile.color %>"><%= puser.username %></span>'s bio: <strong><%= puser.bio %></strong>
             <br><br><br>
-            <h5 class="center-align"><%= puser.username %>'s posts:</h2>
+            <h5 class="center-align"><span style="color: <%= puser.profile.color %>"><%= puser.username %></span>'s posts:</h2>
             <div class="row">
                     <% for(let i = 0; i < posts.length; i++){ %>
                         <div class="card center-align col s6">

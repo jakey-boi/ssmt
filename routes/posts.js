@@ -15,7 +15,8 @@ router.get('/', (req, res) => {
                 if(err) throw err;
                 doc.poster = {
                     username: poster.username,
-                    id: poster._id
+                    id: poster._id,
+                    color: poster.profile.color
                 };
                 doc.createdAt = require('moment')(doc.createdAt).toNow(true);
                 //console.log(doc);
@@ -110,7 +111,8 @@ router.get('/:id', (req, res) => {
             if(err) throw err;
             doc.poster = {
                 username: user.username,
-                id: user._id
+                id: user._id,
+                color: user.profile.color
             };
             res.render('posts/post', { post: doc, user: res.locals.user });
         });
