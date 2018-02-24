@@ -4,6 +4,9 @@ const snek = require('snekfetch');
 const ObjectId = require('mongodb').ObjectId;
 const eachOf = require('async').eachOf;
 const marked = require('marked');
+marked.setOptions({
+    sanitize: true
+});
 const config = require('../config.json');
 
 router.get('/', (req, res) => {

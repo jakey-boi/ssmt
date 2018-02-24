@@ -4,6 +4,9 @@ const ObjectId = require('mongodb').ObjectId;
 const eachOf = require('async').eachOf;
 const isHexColor = require('validator').isHexColor;
 const marked = require('marked');
+marked.setOptions({
+    sanitize: true
+});
 
 router.get('/me', passwordless.restricted({ failureRedirect: '/login' }), (req, res) => {
     req.app.locals.userdb.findOne({ email: req.user }, (err, doc) => {

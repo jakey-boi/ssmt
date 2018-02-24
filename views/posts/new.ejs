@@ -7,6 +7,9 @@
 
         let updatePreview = () => {
             //The user clicked the preview tab, let's render their input!
+            marked.setOptions({
+                sanitize: true
+            });
             let input = $('textarea#text').val();
             let rendered = marked(input);
             $('div#preview-tab').html(rendered);
