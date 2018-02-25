@@ -48,34 +48,6 @@ passwordless.addDelivery((token, uid, recipient, cb, req) => {
         } else {
             app.locals.userdb.insertOne({ username: uid, email: uid, joinedAt: Date.now(), bio: '' }, (err, res) => {
                 if(err) throw err;
-
-                // SEND A MESSAGE VIA THE WEBHOOK, IF ENABLED 
-                let isoTime = new Date(Date.now()).toISOString();
-                if(config.discord.userlog.enabled){
-                    let embed = {
-                        title: `New user ${uid}`,
-                        description: `Look, a new user just signed up!`,
-                        timestamp: isoTime,
-                        fields: [
-                            {
-                                name: 'User email:',
-                                value: uid,
-                                inline: false
-                            },
-                            {
-                                name: 'Join timestamp',
-                                value: isoTime,
-                                inline: false
-                            }
-                        ]
-                    };
-                    snek.post(config.discord.userlog.url)
-                        .send({ embeds: [embed] })
-                        .catch(e => { 
-                            console.log(`[ERROR] Error sending webhook! Error was: ${e}`);
-                            config.discord.userlog.enabled = false;
-                        });
-                }
             });
         }
     });
