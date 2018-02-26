@@ -77,35 +77,6 @@ router.post('/new', passwordless.restricted({ failureRedirect: '/login' }), (req
     });
 });
 
-/*router.post('/vote', passwordless.restricted({ failureRedirect: '/login' }), (req, res) => {
-    let postId = req.body.postId;
-    if(!postId || !ObjectId.isValid(id)) return res.render('error/generic', { user: req.user, msg: `If you're going to do this, at least do it right!` });
-    
-    req.app.locals.db.findOne(new ObjectId(id), (err, doc) => {
-        if(err) throw err;
-        if(doc === null) return res.render('error/404', { user: req.user });
-        //The post exists, so see if the likes array has the user
-        req.app.locals.db.findOne({ _id: new ObjectId(id), likes: new ObjectId(id) })
-    });
-});*/
-
-/*router.post('/posts/delete', passwordless.restricted({ failureRedirect: '/login' }), (req, res) => {
-    let pageId = req.body.pageId;
-    if(pageId) res.json({ ok: false });
-    req.app.locals.db.get('SELECT * FROM posts WHERE id = ?', pageId, (err, row) => {
-        if(err){
-            res.json({ ok: false });
-            throw err;
-        }
-        if(!row) res.json({ ok: false });
-        if(!req.user === row.poster) res.json({ ok: false });
-        req.app.locals.db.run('DELETE FROM posts WHERE id = ?', postId, (err) => {
-            if(err) throw err;
-            res.redirect('/posts');
-        });
-    });
-});*/
-
 router.get('/:id', (req, res) => {
     let id = req.params.id;
     if(!id || !ObjectId.isValid(id)) res.redirect('/posts');

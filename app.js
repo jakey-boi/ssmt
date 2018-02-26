@@ -96,7 +96,6 @@ app.set('view engine', 'ejs');
 app.set('views', `${__dirname}/views`);
 
 /* DATABASE & CONFIG */
-//app.locals.db = new sqlite3.Database(`${__dirname}/data/ssmt.db`);
 MongoClient.connect('mongodb://localhost', (err, client) => {
     if(err) throw err;
     console.log(`[DB] Connection OK`);
