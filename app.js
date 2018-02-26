@@ -46,7 +46,7 @@ passwordless.addDelivery((token, uid, recipient, cb, req) => {
         if(doc){
 
         } else {
-            app.locals.userdb.insertOne({ username: uid, email: uid, joinedAt: Date.now(), bio: '' }, (err, res) => {
+            app.locals.userdb.insertOne({ username: uid, email: uid, joinedAt: Date.now(), bio: '', profile: { color: '#1300FF' } }, (err, res) => {
                 if(err) throw err;
             });
         }
