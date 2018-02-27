@@ -14,7 +14,6 @@ const dd = config.datadog ? require('connect-datadog')({ response_code: true, ta
 const StatD = config.datadog ? require('node-dogstatsd').StatsD : null;
 let dogStats = config.datadog ? new StatD() : null;
 const snek = require('snekfetch');
-const isURL = require('validator').isURL;
 
 const app = express();
 
@@ -24,18 +23,14 @@ passwordless.addDelivery((token, uid, recipient, cb, req) => {
     let host = config.host;
     let msg = {
         to: recipient,
-        from: isURL(host) ? `no-reply@${config.host}` : 'no-reply@ssmt-default-domain.com',
+        from: 'no-reply@vps.unsafe.men',
         subject: 'SSMT Login Token',
         html: `Here's your login URL: <a href="http://${host}/?token=${token}&uid=${encodeURIComponent(uid)}">http://${host}/?token=${token}&uid=${encodeURIComponent(uid)}</a>`
     };
-    console.log(msg)
     if(config.dev){
         console.log(`http://${host}/?token=${token}&uid=${encodeURIComponent(uid)}`);
         cb(null);
     } else {
-        if(config.customEmail.enabled && recipient.endsWith(config.customEmail.for)){
-            msg.from = `${config.customEmail.user}${config.customEmail.for}`;
-        }
         email.send(msg)
             .catch(e => {
                 console.log(`Error sending email! ${e}`);
