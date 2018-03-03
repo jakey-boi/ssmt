@@ -54,7 +54,7 @@ passwordless.addDelivery((token, uid, recipient, cb, req) => {
 });
 
 /* HELMET */
-app.use(require('morgan')('dev'));
+if(config.dev) app.use(require('morgan')('dev'));
 app.use(helmet());
 
 /* OTHER MIDDLEWARE */
