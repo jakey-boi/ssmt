@@ -4,18 +4,22 @@ const snek = require('snekfetch');
 const ObjectId = require('mongodb').ObjectId;
 const eachOf = require('async').eachOf;
 const marked = require('marked');
+const User = require('../models/User');
+const Post = require('../models/Post');
 marked.setOptions({
     sanitize: true
 });
-const config = require('../config.json');
+const config = require('../../config.json')
+//const config = require('../../config.json');
 
 router.get('/', (req, res) => {
-    req.app.locals.db.find().limit(6).sort({ createdAt: -1 }).toArray((err, docs) => {
+    Post.find().sort({ createdAt: -1 }).limit(6).lean().exec((err, docs) => {
         if(err) throw err;
+        console.log(1)
         let prettyDocs = [];
         eachOf(docs, (doc, key, cb) => {
             let id = new ObjectId(doc.poster);
-            req.app.locals.userdb.findOne(id, (err, poster) => {
+            User.findById(id, (err, poster) => {
                 if(err) throw err;
                 doc.poster = {
                     username: poster.username,
@@ -23,7 +27,6 @@ router.get('/', (req, res) => {
                     color: poster.profile.color
                 };
                 doc.createdAt = require('moment')(doc.createdAt).toNow(true);
-                //console.log(doc);
                 doc.text = marked(doc.text);
                 prettyDocs.push(doc);
                 cb();
@@ -42,9 +45,10 @@ router.get('/new', passwordless.restricted({ failureRedirect: '/login' }), (req,
 
 router.post('/new', passwordless.restricted({ failureRedirect: '/login' }), (req, res) => {
     if(!req.body.text) return res.render('error/generic', { user: res.locals.user, msg: 'Missing post body!' });
-    req.app.locals.db.insertOne({ text: req.body.text, poster: res.locals.user._id, createdAt: Date.now() }, (err, response) => {
+    let post = new Post({ text: req.body.text, poster: res.locals.user._id });
+    post.save((err, newDoc) => {
         if(err) throw err;
-        let postId = response.insertedId;
+        let postId = newDoc._id;
         res.redirect(`/posts/${postId}`);
 
         // SEND A MESSAGE VIA THE WEBHOOK, IF ENABLED 
@@ -79,19 +83,21 @@ router.post('/new', passwordless.restricted({ failureRedirect: '/login' }), (req
 
 router.get('/:id', (req, res) => {
     let id = req.params.id;
-    if(!id || !ObjectId.isValid(id)) res.redirect('/posts');
-    req.app.locals.db.findOne(new ObjectId(id), (err, doc) => {
+    if(!id || !ObjectId.isValid(id)) return res.redirect('/posts');
+    Post.findOne(new ObjectId(id)).exec((err, post) => {
         if(err) throw err;
-        if(doc === null) return res.render('error/404', { user: res.locals.user });
-        req.app.locals.userdb.findOne(new ObjectId(doc.poster), (err, user) => {
+        if(post === null) return res.render('error/404', { user: res.locals.user });
+        User.findById(new ObjectId(post.poster)).exec((err, user) => {
             if(err) throw err;
-            doc.poster = {
+            post.poster = { username: 'Error', id: 'ERR_INVALID_USER', color: '#FF0000' };
+            console.log(user.username, user._id, user.profile.color)
+            let text = marked(post.text);
+            let poster = {
                 username: user.username,
                 id: user._id,
                 color: user.profile.color
             };
-            doc.text = marked(doc.text);
-            res.render('posts/post', { post: doc, user: res.locals.user });
+            res.render('posts/post', { post: { text: text, poster: poster }, user: res.locals.user });
         });
     });
 });

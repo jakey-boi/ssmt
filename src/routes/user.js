@@ -4,15 +4,17 @@ const ObjectId = require('mongodb').ObjectId;
 const eachOf = require('async').eachOf;
 const isHexColor = require('validator').isHexColor;
 const marked = require('marked');
+const User = require('../models/User');
+const Post = require('../models/Post');
 marked.setOptions({
     sanitize: true
 });
 
 router.get('/me', passwordless.restricted({ failureRedirect: '/login' }), (req, res) => {
-    req.app.locals.userdb.findOne({ email: req.user }, (err, doc) => {
+    User.findOne({ email: req.user }).exec((err, doc) => {
         if(err) throw err;
         if(doc === null) return res.render('error/404', { user: res.locals.user });
-        req.app.locals.db.find({ poster: new ObjectId(res.locals.user._id) }).toArray((err, docs) => {
+        Post.find({ poster: new ObjectId(res.locals.user._id) }).lean().exec((err, docs) => {
             res.render('user/me', { user: res.locals.user, posts: docs });
         });
     });
@@ -25,7 +27,7 @@ router.post('/update', passwordless.restricted({ failureRedirect: '/login' }), (
     if(!isHexColor(color)) color = '#1300FF';
     if(!color.startsWith('#')) color = '#' + color;
 
-    req.app.locals.userdb.findOneAndUpdate({ email: req.user }, { $set: { username: username, bio: bio, profile: { color: color } } }, (err, result) => {
+    User.updateOne({ email: req.user }, { $set: { username: username, bio: bio, profile: { color: color } } }, (err, result) => {
         if(err) throw err;
         res.redirect('/user/me');
     });
@@ -34,16 +36,16 @@ router.post('/update', passwordless.restricted({ failureRedirect: '/login' }), (
 router.get('/:identifier', (req, res) => {
     let id = req.params.identifier;
     if(!ObjectId.isValid(id)) return res.render('error/404', { user: res.locals.user });
-    req.app.locals.userdb.findOne(new ObjectId(id), (err, doc) => {
+    User.findById(id).exec((err, doc) => {
         if(err) throw err;
         if(doc === null) return res.render('error/404', { user: res.locals.user });
         //That was a valid user ID, return the profile page
-        req.app.locals.db.find({ poster: new ObjectId(id) }).limit(4).sort({ createdAt: -1 }).toArray((err, docs) => {
+        Post.find({ poster: new ObjectId(id) }).limit(4).sort({ createdAt: -1 }).lean().exec((err, docs) => {
             //
             let prettyDocs = [];
             eachOf(docs, (doc, key, cb) => {
-                let id = new ObjectId(doc.poster);
-                req.app.locals.userdb.findOne(id, (err, poster) => {
+                //let id = new ObjectId(doc.poster);
+                User.findById(doc.poster, (err, poster) => {
                     if(err) throw err;
                     doc.poster = {
                         username: poster.username,
