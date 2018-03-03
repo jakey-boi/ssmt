@@ -58,7 +58,6 @@ app.use(require('morgan')('dev'));
 app.use(helmet());
 
 /* OTHER MIDDLEWARE */
-if(config.datadog) app.use(dd);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(session({ store: new sessionStore({ url: `mongodb://localhost/e-sessions` }), secret: 'aaaa', saveUninitialized: false, resave: false }));
