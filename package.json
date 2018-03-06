@@ -8,7 +8,7 @@
     "start": "node app.js"
   },
   "author": "MikeModder",
-  "license": "GPLv3",
+  "license": "GPL-3.0-only",
   "dependencies": {
     "@sendgrid/mail": "^6.2.1",
     "async": "^2.6.0",
