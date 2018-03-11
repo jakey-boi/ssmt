@@ -1,3 +1,7 @@
+body, html {
+    cursor: url('/img/butterfly32.gif'), default;
+}
+
 body {
     display: flex;
     min-height: 100vh;
