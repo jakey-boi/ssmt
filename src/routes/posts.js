@@ -9,8 +9,7 @@ const Post = require('../models/Post');
 marked.setOptions({
     sanitize: true
 });
-const config = require('../../config.json')
-//const config = require('../../config.json');
+const config = require('../../config.json');
 
 router.get('/', (req, res) => {
     Post.find().sort({ createdAt: -1 }).limit(6).lean().exec((err, docs) => {
@@ -86,11 +85,11 @@ router.get('/:id', (req, res) => {
     if(!id || !ObjectId.isValid(id)) return res.redirect('/posts');
     Post.findOne(new ObjectId(id)).exec((err, post) => {
         if(err) throw err;
-        if(post === null) return res.render('error/404', { user: res.locals.user });
+        if(post === null) return res.status(404).render('error/404', { user: res.locals.user });
         User.findById(new ObjectId(post.poster)).exec((err, user) => {
             if(err) throw err;
             post.poster = { username: 'Error', id: 'ERR_INVALID_USER', color: '#FF0000' };
-            console.log(user.username, user._id, user.profile.color)
+            console.log(user.username, user._id, user.profile.color);
             let text = marked(post.text);
             let poster = {
                 username: user.username,

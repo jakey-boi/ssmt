@@ -13,7 +13,7 @@ marked.setOptions({
 router.get('/me', passwordless.restricted({ failureRedirect: '/login' }), (req, res) => {
     User.findOne({ email: req.user }).exec((err, doc) => {
         if(err) throw err;
-        if(doc === null) return res.render('error/404', { user: res.locals.user });
+        if(doc === null) return res.status(404).render('error/404', { user: res.locals.user });
         Post.find({ poster: new ObjectId(res.locals.user._id) }).lean().exec((err, docs) => {
             res.render('user/me', { user: res.locals.user, posts: docs });
         });

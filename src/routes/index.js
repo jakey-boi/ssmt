@@ -21,7 +21,7 @@ router.get('/logout', passwordless.logout(), (req, res) => {
 });
 
 router.get('/unauthorized', (req, res) => {
-    res.render('error/401', { user: res.locals.user });
+    res.status(401).render('error/401', { user: res.locals.user });
 });
 
 router.get('/rss', (req, res) => {
