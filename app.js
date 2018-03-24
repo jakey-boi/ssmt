@@ -13,6 +13,7 @@ const helmet = require('helmet');
 const User = require('./src/models/User');
 const Post = require('./src/models/Post');
 const snek = require('snekfetch');
+const RSS = require('rss');
 
 const app = express();
 
@@ -122,8 +123,41 @@ app.listen(config.port, () => {
             if(err) throw err;
             app.locals.stats.posts = count;
         });
+        Post.find({}).lean().exec((err, posts) => {
+            posts.forEach(p => {
+                app.locals.rss.item({
+                    title: p.title,
+                    description: p.text,
+                    author: p.poster,
+                    date: p.createdAt,
+                    url: `http://${config.host}/posts/${p._id}`
+                });
+                app.locals.rssCache = app.locals.rss.xml();
+            });
+        });
+        setInterval(() => {
+            //Update RSS feed every 30m
+            Post.find({}).lean().exec((err, posts) => {
+                posts.forEach(p => {
+                    app.locals.rss.item({
+                        title: p.text,
+                        description: p.text,
+                        author: p.poster,
+                        date: p.createdAt,
+                        url: `http://${config.host}/posts/${p._id}`
+                    });
+                    app.locals.rssCache = app.locals.rss.xml();
+                });
+            });
+        }, 1800000);
     });
     app.locals.db.on('error', (err) => {
         console.log(`[DB ERR] ${err}`);
+    });
+    app.locals.rss = new RSS({
+        title: 'SSMT RSS Feed',
+        feed_url: `http://${config.host}/rss`,
+        site_url: `http://${config.host}`,
+        copyright: '(c) 2018 MikeModder'
     });
 });

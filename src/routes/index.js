@@ -24,6 +24,10 @@ router.get('/unauthorized', (req, res) => {
     res.render('error/401', { user: res.locals.user });
 });
 
+router.get('/rss', (req, res) => {
+    res.send(req.app.locals.rssCache);
+});
+
 router.get('/health-check', (req, res) => {
     res.status(200).json({ msg: 'The server is running!', ip: req.ip });
 });
