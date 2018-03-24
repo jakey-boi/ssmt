@@ -14,7 +14,6 @@ const config = require('../../config.json');
 router.get('/', (req, res) => {
     Post.find().sort({ createdAt: -1 }).limit(6).lean().exec((err, docs) => {
         if(err) throw err;
-        console.log(1)
         let prettyDocs = [];
         eachOf(docs, (doc, key, cb) => {
             let id = new ObjectId(doc.poster);
