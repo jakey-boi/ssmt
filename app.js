@@ -23,7 +23,7 @@ passwordless.addDelivery((token, uid, recipient, cb, req) => {
     let host = config.host;
     let msg = {
         to: recipient,
-        from: 'no-reply@vps.unsafe.men',
+        from: `no-reply@${host}`,
         subject: 'SSMT Login Token',
         html: `Here's your login URL: <a href="http://${host}/?token=${token}&uid=${encodeURIComponent(uid)}">http://${host}/?token=${token}&uid=${encodeURIComponent(uid)}</a>`
     };
