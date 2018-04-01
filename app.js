@@ -78,6 +78,22 @@ app.use((req, res, next) => {
     }
 });
 
+/* REDIRECT 10% OF REQUESTS */
+app.use((req, res, next) => {
+    const chance = Math.floor(Math.random() * 100);
+    const sites = [
+        'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+        'https://www.youtube.com/watch?v=48rz8udZBmQ'
+    ];
+    if(chance > 90){
+        const site = sites[Math.floor(Math.random() * sites.length)];
+        res.redirect(site);
+    } else {
+        next();
+    }
+});
+
+
 /* STATIC FILES */
 app.use(express.static('src/public'));
 
