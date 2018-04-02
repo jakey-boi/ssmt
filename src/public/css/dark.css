@@ -7,3 +7,6 @@ body {
 .card {
     background-color: black;
 }
+nav, .page-footer {
+    background-color: darkblue;
+}
