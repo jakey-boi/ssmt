@@ -10,3 +10,17 @@ body {
 nav, .page-footer {
     background-color: darkblue;
 }
+button {
+    color: black;
+}
+.tabs {
+    color: white;
+    background-color: black;
+}
+a {
+    color: gray;
+}
+option, select {
+    color: white;
+    background-color: black;
+}

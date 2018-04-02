@@ -24,10 +24,13 @@ router.post('/update', passwordless.restricted({ failureRedirect: '/login' }), (
     let username = req.body.username;
     let bio = req.body.bio;
     let color = req.body.color || '#1300FF';
+    let themeId = parseInt(req.body.theme);
     if(!isHexColor(color)) color = '#1300FF';
     if(!color.startsWith('#')) color = '#' + color;
+    if(typeof themeId === NaN) themeId = 1;
+    if(themeId !== 0 && themeId !== 1) themeId = 1;
 
-    User.updateOne({ email: req.user }, { $set: { username: username, bio: bio, profile: { color: color } } }, (err, result) => {
+    User.findOneAndUpdate({ email: req.user }, { $set: { username: username, bio: bio, profile: { color: color }, theme: { id: themeId } } }, (err, result) => {
         if(err) throw err;
         res.redirect('/user/me');
     });
@@ -41,7 +44,6 @@ router.get('/:identifier', (req, res) => {
         if(doc === null) return res.render('error/404', { user: res.locals.user });
         //That was a valid user ID, return the profile page
         Post.find({ poster: new ObjectId(id) }).limit(4).sort({ createdAt: -1 }).lean().exec((err, docs) => {
-            //
             let prettyDocs = [];
             eachOf(docs, (doc, key, cb) => {
                 //let id = new ObjectId(doc.poster);
@@ -62,7 +64,6 @@ router.get('/:identifier', (req, res) => {
                 doc.bio = marked(doc.bio);
                 res.render('user/user', { user: res.locals.user, puser: doc, posts: docs  });
             });
-            //
         });
     });
 });

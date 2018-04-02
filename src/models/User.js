@@ -7,6 +7,9 @@ let userSchema = mongoose.Schema({
     bio: { type: String, default: '' },
     profile: {
         color: { type: String, default: '#1300FF' }
+    },
+    theme: {
+        id: { type: Number, default: 0 }
     }
 });
 

@@ -26,10 +26,15 @@
             </div>
             <div class="col s12" id="edit-tab">
                 <!-- Editor tab -->
-                <form action="/user/update" method="post">
+                <form action="/user/update" method="post" id="usr-edit-form">
                     Username: <input type="text" name="username" value="<%= user.username %>"><br>
                     Bio: <input type="text" name="bio" value="<%= user.bio %>" id="bio"><br>
                     Custom color: <input type="text" name="color" value="<%= user.profile.color %>"><br>
+                    <br>
+                    Theme: <select name="theme" id="theme-selector" style="display: inline;">
+                        <option value="0">Light</option>
+                        <option value="1">Dark</option>
+                    </select><br><br>
             
                     <button type="submit"><i class="small left material-icons">send</i>Update</button>
                 </form>
