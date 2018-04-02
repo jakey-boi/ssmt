@@ -61,7 +61,7 @@ app.use(helmet());
 /* OTHER MIDDLEWARE */
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(session({ store: new sessionStore({ url: `mongodb://localhost/e-sessions` }), secret: config.secret, saveUninitialized: false, resave: false }));
+app.use(session({ store: new sessionStore({ url: `mongodb://localhost/e-sessions` }), secret: config.secret, saveUninitialized: false, resave: false, cookie: { maxAge: 60000*60*24*7 } }));
 app.use(passwordless.sessionSupport());
 app.use(passwordless.acceptToken({ successRedirect: '/' }));
 
