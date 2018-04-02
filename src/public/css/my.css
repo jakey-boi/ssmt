@@ -6,3 +6,9 @@ body {
 main {
     flex: 1 0 auto;
 }
+.container, .card-content, p {
+    word-wrap: break-word;
+}
+textarea {
+    min-height: 200px;
+}
