@@ -44,6 +44,7 @@ router.get('/new', passwordless.restricted({ failureRedirect: '/login' }), (req,
 router.post('/new', passwordless.restricted({ failureRedirect: '/login' }), (req, res) => {
     if(!req.body.text) return res.render('error/generic', { user: res.locals.user, msg: 'Missing post body!' });
     if(req.body.text.length > 300) return res.render('error/generic', { user: res.locals.user, msg: 'Post content can not be over 300 characters!' });
+    if(req.body.text.length < 4) return res.render('error/generic', { user: res.locals.user, msg: 'Post content must be at least 4 characters!!' });
     let post = new Post({ text: req.body.text, poster: res.locals.user._id });
     post.save((err, newDoc) => {
         if(err) throw err;
