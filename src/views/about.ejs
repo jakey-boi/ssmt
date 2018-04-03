@@ -1,0 +1,52 @@
+<%- include('partials/header', { title: 'Homepage', user: user, desc: 'SSMT Homepage!' }); %>
+    <style>
+        .blurb {
+            padding: 10%
+        }
+    </style>
+    <div class="center-align blurb">
+        <h1>About SSMT</h1>
+        <p>
+            Simple Social Media Thing, more commonly known as SSMT, is a basic social network powered by NodeJS.
+            <br>
+            SSMT started as an idea in Mid October 2017. An idea for a small, open source video sharing platform following the steps of YouTube.
+            Originally, this video sharing platform was to be called OpenVidStream. Once work began though, it quickly became clear that I lacked the skills needed to pull off such a large scale project.
+            The idea was put on the shelf, only to be picked up a few weeks later with a new goal: simple text posts.
+            <br>
+            Instead of allowing users to upload videos, users would be allowed to make short text posts, ala Twitter. This new idea was much easier to implement, but it still took months to get anywhere.
+            The first working version of SSMT came late November. It was lacking most features. There was no authentication, no limit on posts, and no styling. This first version, while lacking was a sign of progress.
+            <br>
+            The first major roadblock of developing SSMT was authentication. Most of the time spent on early development was getting authentication working. After much testing, a solution was found: passwordless.
+            Instead of using a username/password combo, it was decided to use a passwordless system. There are so sign up or login fields, they are the same. A user enters their email, and they are sent a login token
+            This happens if it's a new user, or a returning one. On the backend, the server checks the email against a database, and if it doesn't find one, a new profile is created.
+            This is where another issue showed up, how do we deliver the emails? This one was quickly solved thanks to the GitHub Student Developer pack, which has a Sendgrid code, which allows me to send 15k emails a month,
+            all for free.
+            <br>
+            And so the first major version of SSMT was compete.
+            <br><br>
+            After authenticationwas worked out, something had to be done about the UI. It was basic, no pictures, no CSS, just plain HTML. It looked like something from Web 1.0.
+            Version 2 would primarily focus on the User Interface. I am <em>bad</em> at CSS, so making my own was out of the question. Previously I had used the Bulma CSS framework, but I wanted something more modern.
+            Not long after, I learned about Materialize, a CSS framework focued on brining Google's material design to the rest of the web. With this new tool in hand, it didn't take long to get a much bettr UI done.
+            That UI is in use currently, although with some updates. With the new UI done, there wasn't much to do other than general improvements, and so that's what heppened.
+            <br>
+            Over time the site was made better, user profiles where introduced, with custom color, and username support. We switched to a new database to store posts, and even added a dark theme.
+            That leads us to today, the site is far from complete, but it's grown and matured over time. 
+            <br><br>
+            <h5>It's far from perfect, but I made it.</h3>
+            I learned a ton by taking on this project, and had lots of fun along the way!
+        </p>
+        <br><br>
+        <hr>
+        <br><br>
+        <h1>Technical details</h1>
+        <p>
+            As mentioned above, SSMT is powered by NodeJS. Here is a more comprehensive list of the technologies used.
+            <br><br>
+            NodeJS <%= nodejsver %><br>
+            ExpressJS <br>
+            MongoDB <br>
+            <br><br>
+            For even more information, check out the source <a href="https://github.com/MikeModder/ssmt">on GitHub!</a>
+        </p>
+    </div>
+<%- include('partials/footer'); %>

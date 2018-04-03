@@ -16,6 +16,10 @@ router.post('/sendtoken',
         res.render('login/sent');
 });
 
+router.get('/about', (req, res) => {
+    res.render('about', { user: res.locals.user, stats: req.app.locals.stats, nodejsver: process.version });
+});
+
 router.get('/logout', passwordless.logout(), (req, res) => {
     res.redirect('/');
 });
