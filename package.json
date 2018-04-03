@@ -30,6 +30,7 @@
     "passwordless-mongostore": "^0.1.4",
     "pmx": "^1.5.6",
     "rss": "^1.2.2",
+    "sitemap-generator": "^8.0.0",
     "snekfetch": "^3.6.4",
     "validator": "^9.4.1"
   }

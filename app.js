@@ -14,6 +14,7 @@ const User = require('./src/models/User');
 const Post = require('./src/models/Post');
 const snek = require('snekfetch');
 const RSS = require('rss');
+const sitemap = require('sitemap-generator');
 
 const app = express();
 
@@ -138,7 +139,7 @@ app.listen(config.port, () => {
             });
         });
         setInterval(() => {
-            //Update RSS feed every 30m
+            //Update RSS feed and sitemap every 30m
             Post.find({}).lean().exec((err, posts) => {
                 posts.forEach(p => {
                     app.locals.rss.item({
@@ -152,6 +153,7 @@ app.listen(config.port, () => {
                 });
             });
         }, 1800000);
+        sitemapper.start();
     });
     app.locals.db.on('error', (err) => {
         console.log(`[DB ERR] ${err}`);
@@ -162,4 +164,15 @@ app.listen(config.port, () => {
         site_url: `http://${config.host}`,
         copyright: '(c) 2018 MikeModder'
     });
+    const sitemapper = sitemap(`http://${config.host}`, {
+        filepath: `${__dirname}/src/public/sitemap.xml`
+    });
+    sitemapper.on('done', () => {
+        console.log(`[INFO] Sitemap generation done!`);
+    });
+    sitemapper.on('error', (err) => {
+        console.log(`[ERR] Sitemap generation error!`);
+        console.dir(err);
+    });
+    sitemapper.start();
 });
