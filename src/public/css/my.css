@@ -12,3 +12,7 @@ main {
 textarea {
     min-height: 200px;
 }
+img {
+    max-height: 20%;
+    max-width: 20%;
+}
