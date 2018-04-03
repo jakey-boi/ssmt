@@ -12,7 +12,7 @@ marked.setOptions({
 const config = require('../../config.json');
 
 router.get('/', (req, res) => {
-    Post.find().sort({ createdAt: -1 }).limit(6).lean().exec((err, docs) => {
+    Post.find().sort({ createdAt: -1 }).lean().exec((err, docs) => {
         if(err) throw err;
         let prettyDocs = [];
         eachOf(docs, (doc, key, cb) => {
