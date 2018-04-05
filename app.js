@@ -107,7 +107,7 @@ email.setApiKey(config.sendgrid.apikey);
 
 /* 404 */
 app.get('*', (req, res) => {
-    res.status(404).render('error/404', { user: req.user });
+    res.status(404).render('error/404', { user: res.locals.user });
 });
 
 /* LISTEN */
