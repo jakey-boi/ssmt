@@ -90,7 +90,6 @@ router.get('/:id', (req, res) => {
         User.findById(new ObjectId(post.poster)).exec((err, user) => {
             if(err) throw err;
             post.poster = { username: 'Error', id: 'ERR_INVALID_USER', color: '#FF0000' };
-            console.log(user.username, user._id, user.profile.color);
             let text = marked(post.text);
             let poster = {
                 username: user.username,
